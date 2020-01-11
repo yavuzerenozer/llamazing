@@ -11,7 +11,7 @@ var scene,
   renderer,
   container;
   
-  
+var mousedown = false;
 var collidableMeshList = [];
 
 var arrowList = [];
@@ -80,8 +80,8 @@ var HEIGHT,
     window.addEventListener('resize', onWindowResize, false);    
     
     
-    // document.addEventListener('mousedown', mouseDown, false);
-    
+    document.addEventListener('mousedown', function(){ mousedown = true;}, false);
+    document.addEventListener('mouseup', mouseUp, false);
     
     //document.addEventListener('touchend', handleTouchEnd, false);
     //document.addEventListener('keydown', handleMove, false);
@@ -90,17 +90,31 @@ var HEIGHT,
 
     controls = new THREE.OrbitControls(fakeCamera, renderer.domElement);
     
+    
     controls.minPolarAngle = -Math.PI / 2; 
     controls.maxPolarAngle = Math.PI / 2;
     controls.noZoom = false;
     controls.noPan = false;
     controls.target.add(new THREE.Vector3(50,20,100));
+    controls.enabled = false;
     spitObj = makeCube(new THREE.MeshLambertMaterial({color: 0xffffff,
     flatShading: true}),2,2,2,0,0,0,0,0,0);
   }
 
-
  function mouseDown(){
+     handleSpitDown();
+    changed = true;
+ }
+ function mouseUp(){
+     mousedown = false;
+     handleSpitUp();
+        changed= false;
+ }
+     
+ function rayVertex(){
+     
+    
+    
      raycaster.setFromCamera( mouse.clone(), camera );
     //console.log(scene.children);
     var objects = [];
@@ -174,14 +188,13 @@ function setPickPosition(event) {
     if(map[80]){
         controlsLock.lock();
     }
-    
-    if(map[32]){
-        handleSpitDown();
-        changed = true;
-    }else if(changed){
-        handleSpitUp();
-        changed= false;
+    if(map[67]){ // control with "c"      gonna change
+        controls.enabled = true;
     }
+    if(map[86]){ // play with "v"  Ahmetcan interface lazım amk
+        controls.enabled = false;
+    }
+    
      
         
     
@@ -684,6 +697,8 @@ var spitLength = 50;
 flag = true;
 var curveg
 function loop() {
+    if(mousedown && !controls.enabled)
+        mouseDown();
     handleMove();
     //scene.add(new THREE.ArrowHelper(raycaster.ray.direction, llama.threegroup.position, 300, 0xff0000) );
     scene.remove(arrow);
@@ -692,7 +707,7 @@ function loop() {
     vector.setFromMatrixPosition( llama.mouth.matrixWorld );
     
     geometry.vertices[0] = vector;
-    var v = mouseDown();
+    var v = rayVertex();
     if(v!== undefined)
             {
         geometry.vertices[1] = v;
