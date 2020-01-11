@@ -18,7 +18,7 @@ var arrowList = [];
 var directionList = [];  
 
 //SCENE
-var env, floor, llama,arrow,
+var env, floor, llama,arrow,curve,
         globalSpeedRate = 1,
         map = {},
         maxSpitLoad = .5, spitLoadRate= 0;
@@ -131,10 +131,15 @@ function setPickPosition(event) {
     camera.aspect = WIDTH / HEIGHT;
     camera.updateProjectionMatrix();
   }
+  var inc = 0.1;
   function handleSpitDown()
   {
-        spitLoadRate += (maxSpitLoad - spitLoadRate) ;
+        if(spitLoadRate<maxSpitLoad)
+            spitLoadRate +=  inc*inc;
+        else 
+            spitLoadRate = maxSpitLoad;
         llama.SpitLoad(spitLoadRate);
+        
         //removeEntity(llama.smile);
         
 
@@ -450,9 +455,10 @@ Llama = function()
   }
   Llama.prototype.SpitLoad = function(l)
   {
-      var speed = globalSpeedRate*3;
+      var speed = globalSpeedRate/3;
       if(l === 0)
           speed = globalSpeedRate;
+
       TweenLite.to(this.upper.rotation,speed,{
           x: -l,
           ease : Back.easeOut
@@ -607,16 +613,18 @@ function createLlama(){
     geometry.vertices.push(new THREE.Vector3( 0, 0, 0) );
     geometry.vertices.push(new THREE.Vector3( 20, 10, 0) );
     
-    arrow = new THREE.Line( geometry,  new THREE.LineBasicMaterial( { color: 0x0000ff } ) );
+    arrow = new THREE.Line( geometry,  new THREE.LineDashedMaterial( { color: 0x0000ff } ) );
     arrow.linewidth = 24;
     scene.add(arrow);
 }
 ;
+var spitLength = 50;
 flag = true;
 function loop() {
     handleMove();
     //scene.add(new THREE.ArrowHelper(raycaster.ray.direction, llama.threegroup.position, 300, 0xff0000) );
     scene.remove(arrow);
+    scene.remove(curve);
     var vector = new THREE.Vector3();
     vector.setFromMatrixPosition( llama.mouth.matrixWorld );
     
@@ -631,12 +639,31 @@ function loop() {
         scene.add(llama.head);
         //llama.dummyHead.position.copy(llama.head.position);
             }
-    arrow = new THREE.Line( geometry,  new THREE.LineBasicMaterial( { color: 0x0000ff } ) );
-    scene.add(arrow);
+    spitLength = spitLoadRate*300 + 50;
+    arrow = new THREE.Line( geometry,  new THREE.LineDashedMaterial( { color: 0x555555,dashSize: 2,
+	gapSize: 1 } ) );
+    var curveGeom = new THREE.Geometry();
+    var point1 = getPointInBetweenByLen(geometry.vertices[0],geometry.vertices[1],spitLength);
+    var point0 =geometry.vertices[0].clone();
+    point0.y-=2;
+    point0.z += 3;
+    point1.y +=10;
+    var point2 =getPointInBetweenByLen(geometry.vertices[0],geometry.vertices[1],spitLength*2);;
+    point2.y -=30;
+    var curveg = new THREE.QuadraticBezierCurve3(
+	point0,
+        point1,
+        point2,
+    );
+    var points = curveg.getPoints( 100 );
+    var curveGeom = new THREE.BufferGeometry().setFromPoints( points );
+    var material = new THREE.LineDashedMaterial( { color : 0x666666 } );
     
-            //new THREE.Vector3( raycaster.ray.direction.x,raycaster.ray.direction.y,raycaster.ray.direction.z) ;
-            //new THREE.Vector3( raycaster.ray.direction.x*10000,raycaster.ray.direction.y,raycaster.ray.direction.z);
-    //arrow.geometry.vertices[1].multiplyScalar(10000);
+    curve = new THREE.Line( curveGeom, material );
+    if(spitLoadRate !== 0)    
+        scene.add(curve);
+    else
+        scene.add(arrow);
     camera.copy(fakeCamera);
     
     
@@ -644,11 +671,29 @@ function loop() {
 
     requestAnimationFrame(loop);
 }
+function distanceVector( v1, v2 )
+{
+    var dx = v1.x - v2.x;
+    var dy = v1.y - v2.y;
+    var dz = v1.z - v2.z;
+
+    return Math.sqrt( dx * dx + dy * dy + dz * dz );
+}
+function getPointInBetweenByLen(pointA, pointB, length) {
+
+    var dir = pointB.clone().sub(pointA).normalize().multiplyScalar(length);
+    return pointA.clone().add(dir);
+
+}
 var iss = 0;
 function render() {
   if (controls) controls.update();
   arrow.geometry.verticesNeedUpdate = true;
+  curve.geometry.verticesNeedUpdate = true;
   arrow.geometry.computeBoundingSphere();
+  curve.geometry.computeBoundingSphere();
+  arrow.computeLineDistances();
+  curve.computeLineDistances();
   renderer.render(scene, camera);
 }
 init();
