@@ -212,7 +212,7 @@ function setPickPosition(event) {
   scene.add(shadowLight);
 }
 function createFloor() {
-  env = new THREE.Group();
+  
 
   floor = new THREE.Mesh(new THREE.PlaneBufferGeometry(20000, 20000), new THREE.MeshLambertMaterial({
     color: 0X5be686,
@@ -225,7 +225,31 @@ function createFloor() {
   env.add(floor);
   scene.add(env);
 }
-
+function createWalls(){
+    env = new THREE.Group();
+    var wall1 = new THREE.Mesh(new THREE.PlaneBufferGeometry(20000, 20000), new THREE.MeshLambertMaterial({
+    color: 0X000000,
+    flatShading: true,
+    emissive: 0X87cfeb
+  }));
+    wall1.position.y = -40;
+    wall1.position.z = -6000;
+    wall1.rotation.z = -Math.PI / 2;
+    var wall2 = wall1.clone();
+    wall2.rotation.y = -Math.PI / 2;
+    wall2.position.z = 0;
+    wall2.position.x = 6000;
+    var wall3 = wall1.clone();
+    wall3.rotation.y= Math.PI ;
+    wall3.position.z = 6000;
+    var wall4= wall2.clone();
+    wall4.position.x = -6000;
+    wall4.rotation.y= Math.PI / 2;
+    env.add(wall2);
+    env.add(wall1);
+    env.add(wall3);
+    env.add(wall4);
+}
 function createTrees() {
   var tree = makeCube(new THREE.MeshLambertMaterial({
     color: 0x874a5c,
@@ -738,7 +762,7 @@ function render() {
 }
 init();
 createLights();
-
+createWalls();
 createFloor();
 createTrees();
 createLlama();
