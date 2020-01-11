@@ -25,7 +25,7 @@ var env, floor, llama,arrow,curve,
 var mouse = new THREE.Vector2();
 var raycaster = new THREE.Raycaster();
 //SCREEN VARIABLES
-
+var spitObj;
 var HEIGHT,
   WIDTH,
   windowHalfX,
@@ -95,7 +95,8 @@ var HEIGHT,
     controls.noZoom = false;
     controls.noPan = false;
     controls.target.add(new THREE.Vector3(50,20,100));
-    
+    spitObj = makeCube(new THREE.MeshLambertMaterial({color: 0xffffff,
+    flatShading: true}),2,2,2,0,0,0,0,0,0);
   }
 
 
@@ -139,20 +140,20 @@ function setPickPosition(event) {
         else 
             spitLoadRate = maxSpitLoad;
         llama.SpitLoad(spitLoadRate);
-        
-        //removeEntity(llama.smile);
+        llama.smile.visible = false;
         
 
       
   }
   function handleSpitUp()
   {
-      
+      llama.spit();
       spitLoadRate = 0;
       llama.SpitLoad(spitLoadRate);
-      llama.head.add(llama.smile);
+      llama.smile.visible = true;
       
   }
+  var changed = false;
   function handleMove(){
     if(map[87])
     {
@@ -173,11 +174,17 @@ function setPickPosition(event) {
     if(map[80]){
         controlsLock.lock();
     }
+    
     if(map[32]){
         handleSpitDown();
-    }else{
+        changed = true;
+    }else if(changed){
         handleSpitUp();
+        changed= false;
     }
+     
+        
+    
 }
   function removeEntity(obj) {
       if(typeof obj.parent !== 'undefined'){
@@ -529,6 +536,34 @@ else{
     this.threegroup.rotation.y-=speed;
 }
 }
+Llama.prototype.spit = function()
+{
+    var sp = spitObj.clone();
+    
+    sp.position.z = this.head.position.z+this.mouth.position.z;
+    sp.position.x = this.head.position.x+this.mouth.position.x;
+    sp.position.y = this.head.position.y+this.mouth.position.y;
+    scene.add(sp);
+    var points = curveg.getPoints(30);
+    console.log(typeof(points));
+    console.log(points);
+    init(0);
+    function init(i){
+        console.log(points[i]);
+        var anim = TweenMax.to(sp.position,0.0001,{
+            x: points[i].x,
+            y: points[i].y,
+            z: points[i].z,
+            ease: Back.easeOut,
+            
+        });
+        if(i < points.length-1)
+            anim.eventCallback("onComplete",init,[i+1]);
+        else
+            scene.remove(sp);
+    }
+    
+}
 flag = -1;
 var d = new Date();
 var time = d.getTime();
@@ -594,6 +629,8 @@ function makeCube(mat, w, h, d, posX, posY, posZ, rotX, rotY, rotZ) {
   mesh.rotation.z = rotZ;
   return mesh;
 }
+
+
 var geometry = new THREE.Geometry()
 function createLlama(){
     llama = new Llama();
@@ -616,10 +653,12 @@ function createLlama(){
     arrow = new THREE.Line( geometry,  new THREE.LineDashedMaterial( { color: 0x0000ff } ) );
     arrow.linewidth = 24;
     scene.add(arrow);
+    
 }
 ;
 var spitLength = 50;
 flag = true;
+var curveg
 function loop() {
     handleMove();
     //scene.add(new THREE.ArrowHelper(raycaster.ray.direction, llama.threegroup.position, 300, 0xff0000) );
@@ -650,7 +689,8 @@ function loop() {
     point1.y +=10;
     var point2 =getPointInBetweenByLen(geometry.vertices[0],geometry.vertices[1],spitLength*2);;
     point2.y -=30;
-    var curveg = new THREE.QuadraticBezierCurve3(
+    
+    curveg = new THREE.QuadraticBezierCurve3(
 	point0,
         point1,
         point2,
