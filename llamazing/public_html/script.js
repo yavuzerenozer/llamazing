@@ -10,10 +10,11 @@ var scene,
   light,
   renderer,
   container;
-  
+
+var isFlatShading = true;
 var mousedown = false;
 var collidableMeshList = [];
-
+var trees;
 var arrowList = [];
 var directionList = [];  
 
@@ -98,7 +99,7 @@ var HEIGHT,
     controls.target.add(new THREE.Vector3(50,20,100));
     controls.enabled = false;
     spitObj = makeCube(new THREE.MeshLambertMaterial({color: 0xffffff,
-    flatShading: true}),2,2,2,0,0,0,0,0,0);
+    flatShading: isFlatShading}),2,2,2,0,0,0,0,0,0);
   }
 
  function mouseDown(){
@@ -107,8 +108,9 @@ var HEIGHT,
  }
  function mouseUp(){
      mousedown = false;
-     handleSpitUp();
-        changed= false;
+     if(!controls.enabled){
+        handleSpitUp();
+        changed= false;}
  }
      
  function rayVertex(){
@@ -194,8 +196,32 @@ function setPickPosition(event) {
     if(map[86]){ // play with "v"  Ahmetcan interface lazım amk
         controls.enabled = false;
     }
-    
-     
+    if(map[69] && eatFlag === -1){
+        eatFlag = 1;
+        llama.eat();
+    }
+    if(!map[69] && eatFlag ===1){
+        eatFlag = -1;
+        llama.eat();
+    }
+     if(map[70]){ // flat shading with f      gonna change
+        isFlatShading = true;
+    }
+    if(map[71]){ // smooth with g  Ahmetcan interface lazım amk
+        isFlatShading = false;
+    }
+    if(map[82]){ // flash with r  Ahmetcan interface lazım amk
+        llama.headLight.visible = false;
+    }if(map[84]){ // flash turn off with t
+        llama.headLight.visible = true;
+    }
+    if(map[78]){ // night with n  Ahmetcan interface lazım amk
+        shadowLight.visible = false;
+        light.intensity = .3;
+    }if(map[77]){ // morning with m
+        shadowLight.visible = true;
+        light.intensity = .8;
+    }
         
     
 }
@@ -213,11 +239,11 @@ function setPickPosition(event) {
   shadowLight = new THREE.DirectionalLight(0xffffff, .8);
   shadowLight.position.set(100, 100, 50);
   shadowLight.castShadow = true;
-  //shadowLight.shadowDarkness = .15;
+  shadowLight.shadowDarkness = .15;
 
   backLight = new THREE.DirectionalLight(0xffffff, .4);
   backLight.position.set(200, 100, 100);
-  //backLight.shadowDarkness = .1;
+  backLight.shadowDarkness = .1;
   backLight.castShadow = true;
 
   //scene.add(backLight);
@@ -226,10 +252,11 @@ function setPickPosition(event) {
 }
 function createFloor() {
   
-
-  floor = new THREE.Mesh(new THREE.PlaneBufferGeometry(20000, 20000), new THREE.MeshLambertMaterial({
+  var geom = new THREE.PlaneGeometry(20000, 20000);
+  geom.computeFlatVertexNormals();
+  floor = new THREE.Mesh(geom, new THREE.MeshLambertMaterial({
     color: 0X5be686,
-    flatShading: true
+    flatShading: isFlatShading
   }));
   floor.rotation.x = -Math.PI / 2;
   floor.position.y = -36;
@@ -242,7 +269,7 @@ function createWalls(){
     env = new THREE.Group();
     var wall1 = new THREE.Mesh(new THREE.PlaneBufferGeometry(20000, 20000), new THREE.MeshLambertMaterial({
     color: 0X000000,
-    flatShading: true,
+    flatShading: isFlatShading,
     emissive: 0X87cfeb
   }));
     wall1.position.y = -40;
@@ -266,15 +293,15 @@ function createWalls(){
 function createTrees() {
   var tree = makeCube(new THREE.MeshLambertMaterial({
     color: 0x874a5c,
-    flatShading: true
+    flatShading: isFlatShading
   }), 20, 180, 20, -120, 25, 170, 0, 0, 0);
   var treegrass = makeCube(new THREE.MeshLambertMaterial({
     color: 0x95c088,
-    flatShading: true
+    flatShading: isFlatShading
   }), 120, 80, 120, 0, 105, 0, 0, 0, 0);
   var treeapple = makeCube(new THREE.MeshLambertMaterial({
     color: 0xff0000,
-    flatShading: true
+    flatShading: isFlatShading
   }), 10, 10, 10, 0, 105, 0, 0, 0, 0);
   var treeapple1 = treeapple.clone();
   
@@ -289,7 +316,7 @@ function createTrees() {
   //treegrass.add(treeapple1);
   //treegrass.add(treeapple2);
   var tree2 = tree.clone();
-  var trees = [tree,tree2]; 
+  trees = [tree,tree2]; 
 
   
   for(i = 0; i < 20; i++)
@@ -341,40 +368,40 @@ Llama = function()
     var llamaMat = new THREE.MeshLambertMaterial({
     color: 0xc1aa7a,
         //color: 0x5da683,
-    flatShading: true
+    flatShading: isFlatShading
   });
   var lightGreenMat = new THREE.MeshLambertMaterial({
     color: 0x95c088,
-    flatShading: true
+    flatShading: isFlatShading
   });
 
   var yellowMat = new THREE.MeshLambertMaterial({
     color: 0xfdde8c,
-    flatShading: true
+    flatShading: isFlatShading
   });
 
   var redMat = new THREE.MeshLambertMaterial({
     color: 0xf8e1af,
-    flatShading: true
+    flatShading: isFlatShading
   });
 
   var whiteMat = new THREE.MeshLambertMaterial({
     color: 0xfaf3d7,
-    flatShading: true
+    flatShading: isFlatShading
   });
 
   var brownMat = new THREE.MeshLambertMaterial({
     color: 0x874a5c,
-    flatShading: true
+    flatShading: isFlatShading
   });
 
   var blackMat = new THREE.MeshLambertMaterial({
     color: 0x403133,
-    flatShading: true
+    flatShading: isFlatShading
   });
   var pinkMat = new THREE.MeshLambertMaterial({
     color: 0xd0838e,
-    flatShading: true
+    flatShading: isFlatShading
   });
   this.body = new THREE.Group();
   this.body.name = 'body';
@@ -442,6 +469,20 @@ Llama = function()
   this.noseR = this.noseL.clone();
   this.noseR.position.x = -this.noseL.position.x;
   
+  this.headLight = new THREE.SpotLight(0xffffff);
+  this.headLight.position.set(0,0,1);
+  this.headLight.castShadow = true;
+  this.headLight.shadow.mapSize.width = 1024;
+  this.headLight.shadow.mapSize.height = 1024;
+
+  this.headLight.shadow.camera.near = 500;
+  this.headLight.shadow.camera.far = 4000;
+  this.headLight.shadow.camera.fov = 30;
+  this.headLight.angle = THREE.Math.degToRad(10);
+  this.target = new THREE.Object3D();
+  this.target.position.set(0,0,1+0.1);
+  this.head.add(this.target);
+  this.headLight.target = this.target;
   this.head.add(this.face);
   this.head.add(this.earInL);
   this.head.add(this.earInR);
@@ -458,6 +499,7 @@ Llama = function()
   this.head.add(this.irisR);
   this.head.add(this.noseL);
   this.head.add(this.noseR);
+  this.head.add(this.headLight);
   this.head.scale.set(.5,.5,.5);
   
   
@@ -489,7 +531,7 @@ Llama = function()
   this.threegroup.add(this.legBL);
   this.threegroup.add(this.legBR);
 
-
+  
   this.threegroup.traverse(function(object) {
     if (object instanceof THREE.Mesh) {
       object.castShadow = true;
@@ -563,7 +605,6 @@ Llama.prototype.MoveBackward = function()
     this.moveFeet();
 };
 Llama.prototype.look = function(dir){
-    var _this = this;
   var speed = .01*globalSpeedRate;
   //timeFire = Math.round(s * 10);
   if(dir === "left"){
@@ -572,6 +613,40 @@ Llama.prototype.look = function(dir){
 else{
     this.threegroup.rotation.y-=speed;
 }
+}
+eatFlag = -1;
+Llama.prototype.eat = function(){
+  var speed = 1*globalSpeedRate;
+  
+  if(eatFlag === 1)
+  {
+    TweenLite.to(this.upper.rotation,speed,{
+
+          x:  1 ,
+          ease: Back.easeOut
+
+      });
+      TweenLite.to(this.upper.position,speed,{
+
+          y:  20,
+          ease: Back.easeOut
+
+      });
+  }
+  else{
+      TweenLite.to(this.upper.rotation,speed,{
+
+          x:  0 ,
+          ease: Back.easeOut
+
+      });
+      TweenLite.to(this.upper.position,speed,{
+
+          y:  0,
+          ease: Back.easeOut
+
+      });
+  }
 }
 Llama.prototype.spit = function()
 {
@@ -582,11 +657,9 @@ Llama.prototype.spit = function()
     sp.position.y = this.head.position.y+this.mouth.position.y;
     scene.add(sp);
     var points = curveg.getPoints(30);
-    console.log(typeof(points));
-    console.log(points);
+
     init(0);
     function init(i){
-        console.log(points[i]);
         var anim = TweenMax.to(sp.position,0.0001,{
             x: points[i].x,
             y: points[i].y,
@@ -700,7 +773,18 @@ function loop() {
     if(mousedown && !controls.enabled)
         mouseDown();
     handleMove();
-    //scene.add(new THREE.ArrowHelper(raycaster.ray.direction, llama.threegroup.position, 300, 0xff0000) );
+    changeShading();
+    //scene.add(new THREE.ArrowHelper(raycaster.ray.direction, llama.threegroup.position, 300, 0xff0000) );   
+    aim();
+    
+    camera.copy(fakeCamera);
+    
+    
+    render();
+
+    requestAnimationFrame(loop);
+}
+function aim(){
     scene.remove(arrow);
     scene.remove(curve);
     var vector = new THREE.Vector3();
@@ -713,7 +797,11 @@ function loop() {
         geometry.vertices[1] = v;
         
         llama.head.position.setFromMatrixPosition( llama.dummyHead.matrixWorld );
-        llama.head.lookAt(v);
+        if(!map[69])
+            llama.head.lookAt(v);
+        else{
+            // llama.head.lookat(elma);
+        }
         scene.add(llama.head);
         //llama.dummyHead.position.copy(llama.head.position);
             }
@@ -743,12 +831,40 @@ function loop() {
         scene.add(curve);
     else
         scene.add(arrow);
-    camera.copy(fakeCamera);
-    
-    
-    render();
-
-    requestAnimationFrame(loop);
+}
+function changeShading()
+{
+    if(isFlatShading){
+        floor.material = new THREE.MeshPhongMaterial({
+    color: 0X5be686,
+    flatShading: true
+    });
+    trees.forEach(forfunc);
+    function forfunc(item,index){
+        item.children[0].material =new THREE.MeshPhongMaterial({
+    color: 0x95c088,
+    flatShading: true});
+        item.material = new THREE.MeshPhongMaterial({
+    color: 0x874a5c,
+    flatShading: true});
+    }
+    }
+    else{
+        floor.material = new THREE.MeshLambertMaterial({
+    color: 0X5be686,
+    flatShading: false
+        
+    });
+    trees.forEach(forfunc);
+    function forfunc(item,index){
+        item.children[0].material =new THREE.MeshLambertMaterial({
+    color: 0x95c088,
+    flatShading: false});
+    item.material = new THREE.MeshLambertMaterial({
+    color: 0x874a5c,
+    flatShading: true});
+    }
+    }
 }
 function distanceVector( v1, v2 )
 {
@@ -769,6 +885,7 @@ function render() {
   if (controls) controls.update();
   arrow.geometry.verticesNeedUpdate = true;
   curve.geometry.verticesNeedUpdate = true;
+  floor.material.needsUpdate = true;
   arrow.geometry.computeBoundingSphere();
   curve.geometry.computeBoundingSphere();
   arrow.computeLineDistances();
