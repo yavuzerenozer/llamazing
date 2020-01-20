@@ -14,6 +14,8 @@ var scene,
 var isFlatShading = true;
 var mousedown = false;
 var collidableMeshList = [];
+var applelist = [];
+var INTERSECTED;
 var trees;
 var arrowList = [];
 var directionList = [];  
@@ -347,6 +349,7 @@ function createTrees() {
               treeap.position.x+= (Math.random()-0.5) *110;
           }
           temp.add(treeap);
+          applelist.push(treeap);
       }
       temp.position.x += rand *2000;
       temp.position.z += rand1 *2000;
@@ -669,6 +672,25 @@ Llama.prototype.spit = function()
         });
         if(i < points.length-1)
             anim.eventCallback("onComplete",init,[i+1]);
+            var originPoint = sp.position.clone();
+            for(var vertexIndex = 0; vertexIndex < sp.geometry.vertices.length; vertexIndex++){    
+                var localVertex = sp.geometry.vertices[vertexIndex].clone();
+                var globalVertex = localVertex.applyMatrix4( sp.matrix );
+                var directionVector = globalVertex.sub( sp.position );
+                
+                var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
+        
+                var collisionResults = ray.intersectObjects( applelist );
+                if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ) 
+                        {scene.remove(sp);
+                         INTERSECTED = collisionResults[0].object;
+                         TweenLite.to(INTERSECTED.position,0.5,{
+                y: floor.position.y-18,
+                ease: 0
+            });
+                         //INTERSECTED.position.y = floor.position.y -18;
+                         }
+            }
         else
             scene.remove(sp);
     }
