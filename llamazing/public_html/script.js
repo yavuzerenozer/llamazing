@@ -670,7 +670,7 @@ Llama.prototype.spit = function()
             ease: Back.easeOut,
             
         });
-        if(i < points.length-1)
+        if(i < points.length-1){
             anim.eventCallback("onComplete",init,[i+1]);
             var originPoint = sp.position.clone();
             for(var vertexIndex = 0; vertexIndex < sp.geometry.vertices.length; vertexIndex++){    
@@ -690,7 +690,7 @@ Llama.prototype.spit = function()
             });
                          //INTERSECTED.position.y = floor.position.y -18;
                          }
-            }
+            }}
         else
             scene.remove(sp);
     }
