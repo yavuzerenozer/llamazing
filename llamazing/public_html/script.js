@@ -211,9 +211,10 @@ function setPickPosition(event) {
         isFlatShading = false;
     }
     if(map[82]){ // flash with r  Ahmetcan interface lazım amk
-        llama.headLight.visible = false;
+        llama.headLightBody.visible = false;
+        
     }if(map[84]){ // flash turn off with t
-        llama.headLight.visible = true;
+        llama.headLightBody.visible = true;
     }
     if(map[78]){ // night with n  Ahmetcan interface lazım amk
         shadowLight.visible = false;
@@ -403,6 +404,10 @@ Llama = function()
     color: 0xd0838e,
     flatShading: isFlatShading
   });
+  var normalYellowMat = new THREE.MeshLambertMaterial({
+    color: 0xf9ff79,
+    flatShading: isFlatShading
+  });
   this.body = new THREE.Group();
   this.body.name = 'body';
   this.belly = makeCube(llamaMat, 30, 30, 70, 0, 0, -15, 0, 0, 0);
@@ -469,20 +474,29 @@ Llama = function()
   this.noseR = this.noseL.clone();
   this.noseR.position.x = -this.noseL.position.x;
   
-  this.headLight = new THREE.SpotLight(0xffffff);
+  this.headLight = new THREE.SpotLight(0xf9ff79);
   this.headLight.position.set(0,0,1);
   this.headLight.castShadow = true;
   this.headLight.shadow.mapSize.width = 1024;
   this.headLight.shadow.mapSize.height = 1024;
-
   this.headLight.shadow.camera.near = 500;
   this.headLight.shadow.camera.far = 4000;
   this.headLight.shadow.camera.fov = 30;
   this.headLight.angle = THREE.Math.degToRad(10);
+  
+  this.headLightBody = makeCube(blackMat, 10,10,40,0,55,60,0,0,0);
+  var cone = makeCone(blackMat,15,20,8,0,0,20,0,0,0);
+  var bulb = new THREE.Mesh(new THREE.CircleGeometry(15),normalYellowMat);
+  bulb.position.z = 30;
+  this.headLightBody.add(bulb);
+  cone.rotation.x = THREE.Math.degToRad(-90);
+  this.headLightBody.add(cone);
+  
   this.target = new THREE.Object3D();
   this.target.position.set(0,0,1+0.1);
-  this.head.add(this.target);
+  this.headLightBody.add(this.target);
   this.headLight.target = this.target;
+  this.head.add(this.headLightBody);
   this.head.add(this.face);
   this.head.add(this.earInL);
   this.head.add(this.earInR);
@@ -499,7 +513,7 @@ Llama = function()
   this.head.add(this.irisR);
   this.head.add(this.noseL);
   this.head.add(this.noseR);
-  this.head.add(this.headLight);
+  this.headLightBody.add(this.headLight);
   this.head.scale.set(.5,.5,.5);
   
   
@@ -727,7 +741,17 @@ Llama.prototype.stableFeet = function()
         ease: Back.easeOut
     });
 }
-
+function makeCone(mat, w, h, d, posX, posY, posZ, rotX, rotY, rotZ) {
+  var geom = new THREE.ConeGeometry(w, h, d,1,true);
+  var mesh = new THREE.Mesh(geom, mat);
+  mesh.position.x = posX;
+  mesh.position.y = posY;
+  mesh.position.z = posZ;
+  mesh.rotation.x = rotX;
+  mesh.rotation.y = rotY;
+  mesh.rotation.z = rotZ;
+  return mesh;
+}
 function makeCube(mat, w, h, d, posX, posY, posZ, rotX, rotY, rotZ) {
   var geom = new THREE.BoxGeometry(w, h, d);
   var mesh = new THREE.Mesh(geom, mat);
