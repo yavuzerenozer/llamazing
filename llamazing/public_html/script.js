@@ -11,7 +11,7 @@ var scene,
   renderer,
   pointFiled,
   container;
-
+var moveSpeed = 1;
 var point = 0;
 var isFlatShading = true;
 var mousedown = false;
@@ -250,6 +250,11 @@ function setPickPosition(event) {
             env.children[i].material.emissive = morningColor ;
         }
         console.log(env);
+    }
+    if(map[16]){
+        moveSpeed = 3;
+    }else{
+        moveSpeed = 1;
     }
         
     
@@ -601,9 +606,9 @@ Llama = function()
   }
   Llama.prototype.MoveForward = function()
 {
-    this.threegroup.position.x+=Math.sin(this.threegroup.rotation.y);
+    this.threegroup.position.x+=Math.sin(this.threegroup.rotation.y)*moveSpeed;
     
-    this.threegroup.position.z+=Math.cos(this.threegroup.rotation.y);
+    this.threegroup.position.z+=Math.cos(this.threegroup.rotation.y)*moveSpeed;
     var originPoint = this.threegroup.position.clone();//farklı originler denenebilir.
 
     for(var vertexIndex = 0; vertexIndex < this.threegroup.getObjectByName('face').geometry.vertices.length; vertexIndex++)//face koymamın sebebi ileri giderken 
@@ -628,9 +633,9 @@ Llama = function()
 Llama.prototype.MoveBackward = function()
 {
 
-    this.threegroup.position.x-=Math.sin(this.threegroup.rotation.y);
+    this.threegroup.position.x-=Math.sin(this.threegroup.rotation.y)*moveSpeed;
     
-    this.threegroup.position.z-=Math.cos(this.threegroup.rotation.y);
+    this.threegroup.position.z-=Math.cos(this.threegroup.rotation.y)*moveSpeed;
     var originPoint = this.threegroup.position.clone();
     for(var vertexIndex = 0; vertexIndex < this.threegroup.getObjectByName('face').geometry.vertices.length; vertexIndex++)//origin ya da referans değişecek.
 	{		            
@@ -751,9 +756,9 @@ flag = -1;
 var d = new Date();
 var time = d.getTime();
 Llama.prototype.moveFeet = function() {
-    var speed = 1.3 * globalSpeedRate;
+    var speed = 1.3 * globalSpeedRate / moveSpeed;
     
-    if(time < new Date().getTime() -500){
+    if(time < new Date().getTime() -500/moveSpeed){
         time = new Date().getTime();
         flag = -flag;
     }
