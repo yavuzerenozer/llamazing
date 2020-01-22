@@ -9,8 +9,10 @@ var scene,
   backLight,
   light,
   renderer,
+  pointFiled,
   container;
 
+var point = 0;
 var isFlatShading = true;
 var mousedown = false;
 var collidableMeshList = [];
@@ -18,8 +20,9 @@ var applelist = [];
 var INTERSECTED;
 var trees;
 var arrowList = [];
+var minAppleIx;
 var directionList = [];  
-
+var freeze = false;
 //SCENE
 var env, floor, llama,arrow,curve,
         globalSpeedRate = 1,
@@ -40,7 +43,7 @@ var HEIGHT,
   javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
   function init() {
       
-    powerField = document.getElementById('power');
+    pointField = document.getElementById('point');
       
     scene = new THREE.Scene();
 
@@ -171,21 +174,23 @@ function setPickPosition(event) {
       llama.smile.visible = true;
       
   }
+  var morningColor;
   var changed = false;
+  var eatTime = new Date().getTime();
   function handleMove(){
-    if(map[87])
+    if(map[87] && !freeze)
     {
         llama.MoveForward();
-    }else if(map[83]){
+    }else if(map[83] && !freeze){
         llama.MoveBackward();
     }
     else{
         llama.stableFeet();
     }
-    if(map[65]){
+    if(map[65] && !freeze){
         llama.look("left");
     }
-    else if(map[68]){
+    else if(map[68] && !freeze){
         llama.look("right");
     }
     
@@ -200,11 +205,20 @@ function setPickPosition(event) {
     }
     if(map[69] && eatFlag === -1){
         eatFlag = 1;
+        eatTime = new Date().getTime();
         llama.eat();
+        freeze = true;
     }
-    if(!map[69] && eatFlag ===1){
+    if((!map[69]|| new Date().getTime() > eatTime+2000)  && eatFlag ===1 ){
+        if(new Date().getTime() > eatTime+2000){
+            removeEntity(applelist[minAppleIx]);
+            applelist.splice(minAppleIx,1);
+            point++;
+        }
+            
         eatFlag = -1;
         llama.eat();
+        freeze = false;
     }
      if(map[70]){ // flat shading with f      gonna change
         isFlatShading = true;
@@ -221,9 +235,21 @@ function setPickPosition(event) {
     if(map[78]){ // night with n  Ahmetcan interface lazım amk
         shadowLight.visible = false;
         light.intensity = .3;
+        var world = document.querySelector('#world');
+        world.style.setProperty("background","#000000");
+        
+        for(i= 1; i<5; i++){
+            env.children[i].material.emissive = [0,0,0];
+        }
     }if(map[77]){ // morning with m
         shadowLight.visible = true;
         light.intensity = .8;
+        var world = document.querySelector('#world');
+        world.style.setProperty("background","#87ceeb");
+        for(i= 1; i<5; i++){
+            env.children[i].material.emissive = morningColor ;
+        }
+        console.log(env);
     }
         
     
@@ -275,6 +301,7 @@ function createWalls(){
     flatShading: isFlatShading,
     emissive: 0X87cfeb
   }));
+    morningColor = wall1.material.emissive; 
     wall1.position.y = -40;
     wall1.position.z = -6000;
     wall1.rotation.z = -Math.PI / 2;
@@ -632,16 +659,16 @@ else{
 }
 }
 eatFlag = -1;
+var eatAnim;
 Llama.prototype.eat = function(){
   var speed = 1*globalSpeedRate;
   
   if(eatFlag === 1)
   {
-    TweenLite.to(this.upper.rotation,speed,{
-
-          x:  1 ,
+     TweenLite.to(this.upper.rotation,speed,{
+          x:  1.40 ,
           ease: Back.easeOut
-
+          
       });
       TweenLite.to(this.upper.position,speed,{
 
@@ -649,8 +676,17 @@ Llama.prototype.eat = function(){
           ease: Back.easeOut
 
       });
+      anim = TweenMax.to(this.jaw.rotation,speed/3,{
+          repeat:-1,
+          x:  0.3
+          
+
+      });
+      
   }
   else{
+      anim.kill();
+      this.jaw.rotation.x = 0;
       TweenLite.to(this.upper.rotation,speed,{
 
           x:  0 ,
@@ -663,6 +699,7 @@ Llama.prototype.eat = function(){
           ease: Back.easeOut
 
       });
+      
   }
 }
 Llama.prototype.spit = function()
@@ -814,12 +851,25 @@ function createLlama(){
 ;
 var spitLength = 50;
 flag = true;
-var curveg
+var curveg;
+var distList = [];
+var minApple ;
 function loop() {
     if(mousedown && !controls.enabled)
         mouseDown();
+    pointField.innerHTML = point;
     handleMove();
     changeShading();
+    distList = [];
+    applelist.forEach(appleDist);
+    
+    
+    minApple = Math.min.apply(Math,distList);
+    if(minApple > 90){
+        eatFlag = 0;
+    }else if(eatFlag === 0){
+        eatFlag = -1;
+    }
     //scene.add(new THREE.ArrowHelper(raycaster.ray.direction, llama.threegroup.position, 300, 0xff0000) );   
     aim();
     
@@ -830,6 +880,13 @@ function loop() {
 
     requestAnimationFrame(loop);
 }
+function appleDist(item,index)
+    {
+        var vec = new THREE.Vector3();
+        vec.setFromMatrixPosition(item.matrixWorld);
+        distList.push(llama.threegroup.position.distanceTo(vec));
+    }
+
 function aim(){
     scene.remove(arrow);
     scene.remove(curve);
@@ -846,7 +903,15 @@ function aim(){
         if(!map[69])
             llama.head.lookAt(v);
         else{
-            // llama.head.lookat(elma);
+            distList.forEach(func);
+            function func(item,index){
+                if(item === minApple){
+                    minAppleIx = index;
+                }
+            }
+            var vec = new THREE.Vector3();
+            vec.setFromMatrixPosition(applelist[minAppleIx].matrixWorld);
+            llama.head.lookAt(vec);
         }
         scene.add(llama.head);
         //llama.dummyHead.position.copy(llama.head.position);

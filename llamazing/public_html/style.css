@@ -40,12 +40,12 @@
   color:#f7575f;
 }
 
-#power {
+#point {
   position:absolute;
   width:100%;
-  top:50%;
+  top:0%;
   margin: auto;
-  margin-top:-520px;
+  
   font-family:'Open Sans', sans-serif;
   color:#481f26;
   font-size: 4em;
@@ -53,7 +53,4 @@
   text-align : center;
   line-height : 1.5;
   user-select: none;
-}
-body {
-    margin: 0px;
 }
