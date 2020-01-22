@@ -44,7 +44,7 @@ var HEIGHT,
   function init() {
       
     pointField = document.getElementById('point');
-      
+    instructionField = document.getElementById('instructions');
     scene = new THREE.Scene();
 
     HEIGHT = window.innerHeight;
@@ -859,6 +859,7 @@ flag = true;
 var curveg;
 var distList = [];
 var minApple ;
+var hold = "";
 function loop() {
     if(mousedown && !controls.enabled)
         mouseDown();
@@ -870,10 +871,17 @@ function loop() {
     
     
     minApple = Math.min.apply(Math,distList);
+    
+    if(instructionField.innerHTML !=="Press E to eat" )
+        hold = instructionField.innerHTML;
     if(minApple > 90){
+        instructionField.innerHTML = hold;
         eatFlag = 0;
     }else if(eatFlag === 0){
         eatFlag = -1;
+    }
+    else{
+        instructionField.innerHTML ="Press E to eat";
     }
     //scene.add(new THREE.ArrowHelper(raycaster.ray.direction, llama.threegroup.position, 300, 0xff0000) );   
     aim();
