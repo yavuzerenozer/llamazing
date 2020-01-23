@@ -253,6 +253,8 @@ function setPickPosition(event) {
         if(new Date().getTime() > eatTime+2000){
             removeEntity(applelist[minAppleIx]);
             applelist.splice(minAppleIx,1);
+            if((applelist[minAppleIx].material.id) == 16)point = point + 3;
+			else
             point++;
         }
             
@@ -372,23 +374,23 @@ function createTrees() {
   var bTree = makeCube(new THREE.MeshLambertMaterial({
     color: 0xb05307,
     flatShading: isFlatShading
-  }), 20, 250, 20, -120, 25, 170, 0, 0, 0);
+  }), 20, 520, 20, -120, 25, 170, 0, 0, 0);
   var bTreeGrass = makeCube(new THREE.MeshLambertMaterial({
     color: 0x95c088,
     flatShading: isFlatShading
-  }), 40, 20, 100, 0, 105, -60, THREE.Math.degToRad(-20), 0, 0);
+  }), 40, 20, 100, 0, 250, -60, THREE.Math.degToRad(-20), 0, 0);
   var bTreeGrass1 = makeCube(new THREE.MeshLambertMaterial({
     color: 0x95c088,
     flatShading: isFlatShading
-  }), 100, 20, 40, -60, 105, 0, 0, 0, THREE.Math.degToRad(20));
+  }), 100, 20, 40, -60, 250, 0, 0, 0, THREE.Math.degToRad(20));
   var bTreeGrass2 = makeCube(new THREE.MeshLambertMaterial({
     color: 0x95c088,
     flatShading: isFlatShading
-  }), 100, 20, 40, 60, 105, 0, 0, 0, THREE.Math.degToRad(-20));
+  }), 100, 20, 40, 60, 250, 0, 0, 0, THREE.Math.degToRad(-20));
   var bTreeGrass3 = makeCube(new THREE.MeshLambertMaterial({
     color: 0x95c088,
     flatShading: isFlatShading
-  }), 40, 20, 100, 0, 105, 60, THREE.Math.degToRad(20), 0, 0);
+  }), 40, 20, 100, 0, 250, 60, THREE.Math.degToRad(20), 0, 0);
   bTree.add(bTreeGrass);
   bTree.add(bTreeGrass1);
   bTree.add(bTreeGrass2);
@@ -398,7 +400,7 @@ function createTrees() {
     color: 0xffff00,
     flatShading: isFlatShading}));
   var bananas = new THREE.Group();
-  banana.position.y = 110;
+  banana.position.y = 245;
   banana.position.x = 10;
   banana.rotation.z = THREE.Math.degToRad(-90);
   ban1 = banana.clone();
