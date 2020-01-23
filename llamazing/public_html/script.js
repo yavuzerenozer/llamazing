@@ -337,6 +337,14 @@ function createWalls(){
     env.add(wall3);
     env.add(wall4);
 }
+var redAppleMat = new THREE.MeshLambertMaterial({
+    color: 0xff0000,
+    flatShading: isFlatShading
+  });
+var greenAppleMat = new THREE.MeshLambertMaterial({
+    color: 0x659e20,
+    flatShading: isFlatShading
+  });
 function createTrees() {
   var tree = makeCube(new THREE.MeshLambertMaterial({
     color: 0x874a5c,
@@ -346,10 +354,7 @@ function createTrees() {
     color: 0x95c088,
     flatShading: isFlatShading
   }), 120, 80, 120, 0, 105, 0, 0, 0, 0);
-  var treeapple = makeCube(new THREE.MeshLambertMaterial({
-    color: 0xff0000,
-    flatShading: isFlatShading
-  }), 10, 10, 10, 0, 105, 0, 0, 0, 0);
+  var treeapple = makeCube(redAppleMat, 10, 10, 10, 0, 105, 0, 0, 0, 0);
   var treeapple1 = treeapple.clone();
   
   treeapple1.position.z-=20;
@@ -364,40 +369,99 @@ function createTrees() {
   //treegrass.add(treeapple2);
   var tree2 = tree.clone();
   trees = [tree,tree2]; 
-
+  var bTree = makeCube(new THREE.MeshLambertMaterial({
+    color: 0xb05307,
+    flatShading: isFlatShading
+  }), 20, 250, 20, -120, 25, 170, 0, 0, 0);
+  var bTreeGrass = makeCube(new THREE.MeshLambertMaterial({
+    color: 0x95c088,
+    flatShading: isFlatShading
+  }), 40, 20, 100, 0, 105, -60, THREE.Math.degToRad(-20), 0, 0);
+  var bTreeGrass1 = makeCube(new THREE.MeshLambertMaterial({
+    color: 0x95c088,
+    flatShading: isFlatShading
+  }), 100, 20, 40, -60, 105, 0, 0, 0, THREE.Math.degToRad(20));
+  var bTreeGrass2 = makeCube(new THREE.MeshLambertMaterial({
+    color: 0x95c088,
+    flatShading: isFlatShading
+  }), 100, 20, 40, 60, 105, 0, 0, 0, THREE.Math.degToRad(-20));
+  var bTreeGrass3 = makeCube(new THREE.MeshLambertMaterial({
+    color: 0x95c088,
+    flatShading: isFlatShading
+  }), 40, 20, 100, 0, 105, 60, THREE.Math.degToRad(20), 0, 0);
+  bTree.add(bTreeGrass);
+  bTree.add(bTreeGrass1);
+  bTree.add(bTreeGrass2);
+  bTree.add(bTreeGrass3);
+  var bGeo = new THREE.TorusGeometry( 10, 3, 16, 100, Math.PI*3/4 ); 
+  var banana = new THREE.Mesh(bGeo,new THREE.MeshLambertMaterial({
+    color: 0xffff00,
+    flatShading: isFlatShading}));
+  var bananas = new THREE.Group();
+  banana.position.y = 110;
+  banana.position.x = 10;
+  banana.rotation.z = THREE.Math.degToRad(-90);
+  ban1 = banana.clone();
+  ban1.rotation.y = THREE.Math.degToRad(45);
+  ban2 = banana.clone();
+  ban2.rotation.y = THREE.Math.degToRad(-45);
+  bananas.add(banana);
+  bananas.add(ban1);
+  bananas.add(ban2);
+  //bTree.add(bananas);
+  //scene.add(bTree);
   
-  for(i = 0; i < 20; i++)
+  for(i = 0; i < 60; i++)
   {
+      var temp;
       var rand =  Math.random()-0.5;
       var rand1 =  Math.random()-0.5;
       var rand2 =  Math.random()-0.5;
-      var temp = tree.clone();
-      
-      for(e = 0; e < 12; e++){
-          var treeap = treeapple.clone();
-          if(e < 3){
-              treeap.position.x-=60;
-              treeap.position.y+= (Math.random()-0.5) *70;
-              treeap.position.z+= (Math.random()-0.5) *110;
-          }else if(e < 6){
-              treeap.position.x+=60;
-              treeap.position.y+= (Math.random()-0.5) *70;
-              treeap.position.z+= (Math.random()-0.5) *110;
-          }else if(e < 9){
-              treeap.position.z+=60;
-              treeap.position.y+= (Math.random()-0.5) *70;
-              treeap.position.x+= (Math.random()-0.5) *110;
-          }
-          else if(e < 12){
-              treeap.position.z-=60;
-              treeap.position.y+= (Math.random()-0.5) *70;
-              treeap.position.x+= (Math.random()-0.5) *110;
-          }
-          temp.add(treeap);
-          applelist.push(treeap);
+      if(Math.random()>0.1){
+        temp = tree.clone();
+        
+        var color;
+        if(Math.random()>0.5)
+                color = greenAppleMat;
+        else
+            color = redAppleMat;
+        for(e = 0; e < 12; e++){
+            var treeap = treeapple.clone();
+            treeap.material = color;
+            if(e < 3){
+                treeap.position.x-=60;
+                treeap.position.y+= (Math.random()-0.5) *70;
+                treeap.position.z+= (Math.random()-0.5) *110;
+            }else if(e < 6){
+                treeap.position.x+=60;
+                treeap.position.y+= (Math.random()-0.5) *70;
+                treeap.position.z+= (Math.random()-0.5) *110;
+            }else if(e < 9){
+                treeap.position.z+=60;
+                treeap.position.y+= (Math.random()-0.5) *70;
+                treeap.position.x+= (Math.random()-0.5) *110;
+            }
+            else if(e < 12){
+                treeap.position.z-=60;
+                treeap.position.y+= (Math.random()-0.5) *70;
+                treeap.position.x+= (Math.random()-0.5) *110;
+            }
+            temp.add(treeap);
+            applelist.push(treeap);
+        }
+          
       }
-      temp.position.x += rand *2000;
-      temp.position.z += rand1 *2000;
+      else{
+          temp = bTree.clone();
+          var ban = bananas.clone();
+          temp.add(ban);
+          applelist.push(ban.children[0]);
+          applelist.push(ban.children[1]);
+          applelist.push(ban.children[2]);
+      }
+      temp.position.y += (Math.random()/2-0.5)*40;
+      temp.position.x += rand *5000;
+      temp.position.z += rand1 *5000;
       temp.rotation.y += rand2 *200;
       trees.push(temp);      
       scene.add(trees[i+2]);
@@ -753,7 +817,7 @@ Llama.prototype.spit = function()
                         {scene.remove(sp);
                          INTERSECTED = collisionResults[0].object;
                          TweenLite.to(INTERSECTED.position,0.5,{
-                y: floor.position.y-18,
+                y: floor.position.y+4-INTERSECTED.parent.position.y,
                 ease: 0
             });
                          //INTERSECTED.position.y = floor.position.y -18;
