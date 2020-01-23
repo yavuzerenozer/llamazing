@@ -23,7 +23,6 @@ var arrowList = [];
 var minAppleIx;
 var directionList = [];  
 var freeze = false;
-var shadeflag = 0;
 //SCENE
 var env, floor, llama,arrow,curve,
         globalSpeedRate = 1,
@@ -222,13 +221,11 @@ function setPickPosition(event) {
         llama.eat();
         freeze = false;
     }
-    if(map[70] && shadeflag == 0){ // flat shading with f      gonna change
+    if(map[70] && isFlatShading == true){ // flat shading with f      gonna change
         isFlatShading = false;
-		shadeflag = 1;
     }
-    else if (map[70] && shadeflag == 1){
+    else if (map[70] && isFlatShading == false){
         isFlatShading = true;
-		shadeflag = 0;
     }
     if(map[82] && llama.headLightBody.visible == true){ // flash with r  Ahmetcan interface lazım amk
         llama.headLightBody.visible = false;
