@@ -27,13 +27,14 @@
 #instructions2{
   position:absolute;
   width:100%;
-  top:10%;
+  top:30%;
+  left:2%;
   margin: auto;
   font-family:'Open Sans', sans-serif;
   color:#481f26;
   font-size:1.5em;
   text-transform: uppercase;
-  text-align : center;
+  text-align : left;
   line-height : 1.5;
   user-select: none;
 }
