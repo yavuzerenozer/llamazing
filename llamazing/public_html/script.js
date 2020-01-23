@@ -23,6 +23,7 @@ var arrowList = [];
 var minAppleIx;
 var directionList = [];  
 var freeze = false;
+var shadeflag = 0;
 //SCENE
 var env, floor, llama,arrow,curve,
         globalSpeedRate = 1,
@@ -44,6 +45,7 @@ var HEIGHT,
   function init() {
       
     pointField = document.getElementById('point');
+    instructionField2 = document.getElementById('instructions2');
     instructionField = document.getElementById('instructions');
     scene = new THREE.Scene();
 
@@ -220,19 +222,21 @@ function setPickPosition(event) {
         llama.eat();
         freeze = false;
     }
-     if(map[70]){ // flat shading with f      gonna change
-        isFlatShading = true;
-    }
-    if(map[71]){ // smooth with g  Ahmetcan interface lazım amk
+    if(map[70] && shadeflag == 0){ // flat shading with f      gonna change
         isFlatShading = false;
+		shadeflag = 1;
     }
-    if(map[82]){ // flash with r  Ahmetcan interface lazım amk
+    else if (map[70] && shadeflag == 1){
+        isFlatShading = true;
+		shadeflag = 0;
+    }
+    if(map[82] && llama.headLightBody.visible == true){ // flash with r  Ahmetcan interface lazım amk
         llama.headLightBody.visible = false;
         
-    }if(map[84]){ // flash turn off with t
+    }else if(map[82] && llama.headLightBody.visible == false){ // flash turn off with t
         llama.headLightBody.visible = true;
     }
-    if(map[78]){ // night with n  Ahmetcan interface lazım amk
+    if(map[78] && shadowLight.visible == true){ // night with n  Ahmetcan interface lazım amk
         shadowLight.visible = false;
         light.intensity = .3;
         var world = document.querySelector('#world');
@@ -241,7 +245,7 @@ function setPickPosition(event) {
         for(i= 1; i<5; i++){
             env.children[i].material.emissive = [0,0,0];
         }
-    }if(map[77]){ // morning with m
+    }else if(map[78] && shadowLight.visible == false){ // morning with m
         shadowLight.visible = true;
         light.intensity = .8;
         var world = document.querySelector('#world');
@@ -860,6 +864,8 @@ var curveg;
 var distList = [];
 var minApple ;
 var hold = "";
+var hold2 = "";
+var flag_inst = 0;
 function loop() {
     if(mousedown && !controls.enabled)
         mouseDown();
@@ -871,8 +877,23 @@ function loop() {
     
     
     minApple = Math.min.apply(Math,distList);
+
+    function closeHelpDiv1(){
+		document.getElementById("instructions2").innerHTML="";
+	}
+	if(map[73] && flag_inst == 0 )
+	{
+		instructionField2.innerHTML = "<p>Press 'R' to activate/deactivate headlight</p><p>Press 'N' to activate/deactivate sun.</p><p>Press 'F' to switch between shadings.</p><p>Press 'P' to deactivate pointerlock.</p> ";
+		flag_inst = 1;
+	}
+	else if(map[73] && flag_inst == 1)
+	{
+			document.getElementById("instructions2").innerHTML="";
+			flag_inst = 0;
+			
+	}
     
-    if(instructionField.innerHTML !=="Press E to eat" )
+    if(instructionField.innerHTML !=="Hold E to eat" )
         hold = instructionField.innerHTML;
     if(minApple > 90){
         instructionField.innerHTML = hold;
@@ -881,7 +902,7 @@ function loop() {
         eatFlag = -1;
     }
     else{
-        instructionField.innerHTML ="Press E to eat";
+        instructionField.innerHTML ="Hold E to eat";
     }
     //scene.add(new THREE.ArrowHelper(raycaster.ray.direction, llama.threegroup.position, 300, 0xff0000) );   
     aim();

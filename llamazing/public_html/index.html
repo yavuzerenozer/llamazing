@@ -12,6 +12,8 @@
 </div>
 
 <div id="instructions"><br/><span class="lightInstructions"></span></div>
+<div id="helper"><br/> PRESS "I" FOR INSTRUCTIONS</div>
+<div id="instructions2"><br/></div>
 
 <div id="point">00</div>
 <!-- partial -->
@@ -22,6 +24,13 @@
 <script  src="./GPUPicker.js"></script>
 <script  src="./OrbitControls.js"></script>
 <script  src="./PointerLockControls.js"></script>
+<script type="text/javascript">
+  window.setTimeout("closeHelpDiv();", 3000);//closin in 3 sec.
+  
+  function closeHelpDiv(){
+  document.getElementById("helper").style.display=" none";
+  }
+  
 
 <!--<script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/264161/OrbitControls.js'><script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r70/three.min.js'></script></script>-->
 <script  src="./script.js"></script> 

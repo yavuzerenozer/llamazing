@@ -22,7 +22,33 @@
 }
 .lightInstructions {
   color:#f89a78;
-  font-size:.9em;
+  font-size:.9em; 
+}
+#instructions2{
+  position:absolute;
+  width:100%;
+  top:10%;
+  margin: auto;
+  font-family:'Open Sans', sans-serif;
+  color:#481f26;
+  font-size:1.5em;
+  text-transform: uppercase;
+  text-align : center;
+  line-height : 1.5;
+  user-select: none;
+}
+#helper{
+  position:absolute;
+  width:100%;
+  top:10%;
+  margin: auto;
+  font-family:'Open Sans', sans-serif;
+  color:#c92440;
+  font-size:1.5em;
+  text-transform: uppercase;
+  text-align : center;
+  line-height : 1.5;
+  user-select: none;
 }
 #credits{
   position:absolute;
