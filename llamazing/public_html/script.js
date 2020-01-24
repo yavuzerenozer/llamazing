@@ -43,7 +43,7 @@ var HEIGHT,
     x: 0,
     y: 0
   };
-  javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
+  //javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
   function init() {
       
     pointField = document.getElementById('point');
@@ -965,7 +965,15 @@ function loop() {
     distList = [];
     applelist.forEach(appleDist);
     if(editMode)
+    {
+        document.getElementById("TreeButton").style.display="inline"
+        document.getElementById("RockButton").style.display="inline"
         edit();
+    }
+    else{
+        document.getElementById("TreeButton").style.display="none"
+        document.getElementById("RockButton").style.display="none"
+    }
     
     minApple = Math.min.apply(Math,distList);
     
@@ -994,8 +1002,10 @@ function loop() {
 }
 var mouseEdit = false;
 var newTree;
-document.addEventListener('mousedown', function(){if(!mouseEdit && editMode)newTree = createOneTree();
-                                                        mouseEdit = true;}, false);
+document.getElementById("TreeButton").addEventListener("click",function(){ 
+    if(!mouseEdit && editMode)newTree = createOneTree();
+});
+document.addEventListener('mousedown', function(){mouseEdit = true;}, false);
 document.addEventListener('mouseup', function(){ mouseEdit = false;}, false);  
 document.addEventListener('mousemove', function(){if(editMode && mouseEdit){
             newTree.position.x = target.x+10;
