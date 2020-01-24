@@ -10,6 +10,7 @@ var scene,
   light,
   renderer,
   pointFiled,
+  treeIns,treeapple,
   container;
 var instructionField2=document.getElementById('instructions2');
 var moveSpeed = 1;
@@ -24,6 +25,7 @@ var arrowList = [];
 var minAppleIx;
 var directionList = [];  
 var freeze = false;
+var editMode = false;
 //SCENE
 var env, floor, llama,arrow,curve,
         globalSpeedRate = 1,
@@ -48,7 +50,7 @@ var HEIGHT,
     instructionField2 = document.getElementById('instructions2');
     instructionField = document.getElementById('instructions');
     scene = new THREE.Scene();
-
+    
     HEIGHT = window.innerHeight;
     WIDTH = window.innerWidth;
     aspectRatio = WIDTH / HEIGHT;
@@ -119,7 +121,7 @@ var HEIGHT,
         handleSpitUp();
         changed= false;}
  }
-     
+ var targetObj;    
  function rayVertex(){
      
     
@@ -134,6 +136,7 @@ var HEIGHT,
     var obj = raycaster.intersectObjects(objects);
     if(obj.length !== 0){
         //console.log(obj[0]);
+        targetObj = obj[0];
         return obj[0].point;
          //obj[0].object.material.emissive.setHex((time * 8) % 2 > 1 ? 0xFFFF00 : 0xFF0000);
     }
@@ -207,6 +210,7 @@ function setPickPosition(event) {
         for(i= 1; i<5; i++){
             env.children[i].material.emissive = [0,0,0];
         }
+        
     }else if(event.keyCode === 78 && shadowLight.visible == false){ 
         shadowLight.visible = true;
         light.intensity = .8;
@@ -221,6 +225,15 @@ function setPickPosition(event) {
         closeHelpDiv1();
         flag_inst = !flag_inst; 
     }
+    if(event.keyCode === 81 && !editMode)
+    {
+        editMode = true;
+    }
+    else if(event.keyCode === 81 && editMode)
+    {
+        editMode = false;
+        freeze = false;
+    } 
   }
   function handleMove(){
     if(map[87] && !freeze)
@@ -356,7 +369,7 @@ function createTrees() {
     color: 0x95c088,
     flatShading: isFlatShading
   }), 120, 80, 120, 0, 105, 0, 0, 0, 0);
-  var treeapple = makeCube(redAppleMat, 10, 10, 10, 0, 105, 0, 0, 0, 0);
+  treeapple = makeCube(redAppleMat, 10, 10, 10, 0, 105, 0, 0, 0, 0);
   var treeapple1 = treeapple.clone();
   
   treeapple1.position.z-=20;
@@ -369,6 +382,7 @@ function createTrees() {
   //treegrass.add(treeapple);
   //treegrass.add(treeapple1);
   //treegrass.add(treeapple2);
+  treeIns = tree.clone();
   var tree2 = tree.clone();
   trees = [tree,tree2]; 
   var bTree = makeCube(new THREE.MeshLambertMaterial({
@@ -421,7 +435,33 @@ function createTrees() {
       var rand2 =  Math.random()-0.5;
       if(Math.random()>0.1){
         temp = tree.clone();
+        addApples(temp);
+          
+      }
+      else{
+          temp = bTree.clone();
+          var ban = bananas.clone();
+          temp.add(ban);
+          applelist.push(ban.children[0]);
+          applelist.push(ban.children[1]);
+          applelist.push(ban.children[2]);
+      }
+      temp.position.y += (Math.random()-0.25)*70;
+      temp.position.x += rand *5000;
+      temp.position.z += rand1 *5000;
+      temp.rotation.y += rand2 *200;
+      trees.push(temp);      
+      scene.add(trees[i+2]);
+      collidableMeshList.push(trees[i+2]);
+
         
+  }
+  
+  
+  
+}
+function addApples(temp){
+    
         var color;
         if(Math.random()>0.5)
                 color = greenAppleMat;
@@ -451,31 +491,7 @@ function createTrees() {
             temp.add(treeap);
             applelist.push(treeap);
         }
-          
-      }
-      else{
-          temp = bTree.clone();
-          var ban = bananas.clone();
-          temp.add(ban);
-          applelist.push(ban.children[0]);
-          applelist.push(ban.children[1]);
-          applelist.push(ban.children[2]);
-      }
-      temp.position.y += (Math.random()/2-0.5)*40;
-      temp.position.x += rand *5000;
-      temp.position.z += rand1 *5000;
-      temp.rotation.y += rand2 *200;
-      trees.push(temp);      
-      scene.add(trees[i+2]);
-      collidableMeshList.push(trees[i+2]);
-
-        
-  }
-  
-  
-  
 }
-
 Llama = function() 
 {
     this.threegroup = new THREE.Group();
@@ -948,10 +964,11 @@ function loop() {
     changeShading();
     distList = [];
     applelist.forEach(appleDist);
-    
+    if(editMode)
+        edit();
     
     minApple = Math.min.apply(Math,distList);
-
+    
     
     if(instructionField.innerHTML !=="Hold E to eat" )
         hold = instructionField.innerHTML;
@@ -965,7 +982,8 @@ function loop() {
         instructionField.innerHTML ="Hold E to eat";
     }
     //scene.add(new THREE.ArrowHelper(raycaster.ray.direction, llama.threegroup.position, 300, 0xff0000) );   
-    aim();
+    
+        aim();
     
     camera.copy(fakeCamera);
     
@@ -974,11 +992,55 @@ function loop() {
 
     requestAnimationFrame(loop);
 }
+var mouseEdit = false;
+var newTree;
+document.addEventListener('mousedown', function(){if(!mouseEdit && editMode)newTree = createOneTree();
+                                                        mouseEdit = true;}, false);
+document.addEventListener('mouseup', function(){ mouseEdit = false;}, false);  
+document.addEventListener('mousemove', function(){if(editMode && mouseEdit){
+            newTree.position.x = target.x+10;
+            newTree.position.z = target.z+10;}
+        });
+function edit()
+{
+    
+    freeze = true;
+    
+    
+    if(mouseEdit)
+    {
+        document.addEventListener("wheel", event => {
+        const delta = Math.sign(event.deltaY);
+        rotate(delta);
+        });
+        function rotate(del){
+            newTree.rotation.y+= THREE.Math.degToRad(del/30);
+        }
+        
+            
+        
+        document.removeEventListener("wheel",event => {
+        const delta = Math.sign(event.deltaY);
+        rotate(delta);
+        });
+    }
+    
+    
+}
+function createOneTree(){
+    var tree = treeIns.clone();
+    trees.push(tree);
+    addApples(tree);
+    collidableMeshList.push(tree);
+    scene.add(tree);
+    
+    return tree;
+}
 function closeHelpDiv1(){
 	if(flag_inst )
 	{
                 document.getElementById("helper").style.display=" none";
-		instructionField2.innerHTML = "<p>Press 'R' to activate/deactivate headlight</p><p>Press 'N' change day/night settings.</p><p>Press 'F' to switch between shadings.</p><p>Press 'C' to change the camera position.</p> ";
+		instructionField2.innerHTML = "<p>Press 'R' to activate/deactivate headlight</p><p>Press 'N' change day/night settings.</p><p>Press 'F' to switch between shadings.</p><p>Press 'C' to change the camera position.</p><p>Press 'Q' to change to edit mode.</p> ";
 	}
 	else if(!flag_inst)
 	{
@@ -992,7 +1054,7 @@ function appleDist(item,index)
         vec.setFromMatrixPosition(item.matrixWorld);
         distList.push(llama.threegroup.position.distanceTo(vec));
     }
-
+var target;
 function aim(){
     scene.remove(arrow);
     scene.remove(curve);
@@ -1004,7 +1066,7 @@ function aim(){
     if(v!== undefined)
             {
         geometry.vertices[1] = v;
-        
+        target = v;
         llama.head.position.setFromMatrixPosition( llama.dummyHead.matrixWorld );
         if(!map[69])
             llama.head.lookAt(v);
