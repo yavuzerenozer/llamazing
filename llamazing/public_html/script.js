@@ -376,15 +376,17 @@ function createBanner(){
   function createLights() {
   light = new THREE.HemisphereLight(0xffffff, 0xb3858c, .8);
 
-  shadowLight = new THREE.DirectionalLight(0xffffff, .8);
-  shadowLight.position.set(100, 100, 50);
+  shadowLight = new THREE.DirectionalLight(0xffffff, .8,100);
+  shadowLight.position.set(10000, 10000, 5000);
   shadowLight.castShadow = true;
-  shadowLight.shadowDarkness = .15;
-
-  backLight = new THREE.DirectionalLight(0xffffff, .4);
-  backLight.position.set(200, 100, 100);
-  backLight.shadowDarkness = .1;
-  backLight.castShadow = true;
+  shadowLight.shadow.mapSize.width = 5120;  // default
+  shadowLight.shadow.mapSize.height = 5120; // default
+  shadowLight.shadow.camera.near = 10;    // default
+  shadowLight.shadow.camera.far = 50000;
+  shadowLight.shadow.camera.left = -3200;
+  shadowLight.shadow.camera.bottom = -2500;
+  shadowLight.shadow.camera.right = 3200;
+  shadowLight.shadow.camera.top = 2500;
 
   //scene.add(backLight);
   scene.add(light);
