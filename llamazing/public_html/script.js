@@ -125,23 +125,23 @@ var HEIGHT,
         handleSpitUp();
         changed= false;}
  }
- var targetObj;    
+ var objs;    
  function rayVertex(){
      
     
     
      raycaster.setFromCamera( mouse.clone(), camera );
     //console.log(scene.children);
-    var objects = [];
+     var objects = [];
      scene.traverse(function(object){
          objects.push(object);
      });
     
-    var obj = raycaster.intersectObjects(objects);
-    if(obj.length !== 0){
+    objs = raycaster.intersectObjects(objects);
+    if(objs.length !== 0){
         //console.log(obj[0]);
-        targetObj = obj[0];
-        return obj[0].point;
+        targetObj = objs[0];
+        return objs[0].point;
          //obj[0].object.material.emissive.setHex((time * 8) % 2 > 1 ? 0xFFFF00 : 0xFF0000);
     }
      
@@ -323,6 +323,7 @@ function createFloor() {
     color: 0X5be686,
     flatShading: isFlatShading
   }));
+  floor.name = "floor";
   floor.rotation.x = -Math.PI / 2;
   floor.position.y = -36;
   floor.receiveShadow = true;
@@ -1095,21 +1096,28 @@ document.getElementById("RockButton").addEventListener("click",function(){
 });
 document.addEventListener('mousedown', function(){mouseEdit = true;}, false);
 document.addEventListener('mouseup', function(){ mouseEdit = false;}, false);  
-document.addEventListener('mousemove', function(){if(editMode && mouseEdit){
-            newInstance.position.x = target.x+10;
-            newInstance.position.z = target.z+10;}
+document.addEventListener('mousemove', function(){if(editMode && mouseEdit ){
+            newInstance.position.x = target.x;
+            newInstance.position.z = target.z;}
         });
 function edit()
 {
-    
+    for(var i = 0; i<objs.length; i++){
+        
+        if(objs[i].object.name === "floor"){
+            target = objs[i].point;
+        }
+    }
     freeze = true;
     
     
     if(mouseEdit)
     {
+        console.log("sda");
         document.addEventListener("wheel", event => {
         const delta = Math.sign(event.deltaY);
-        rotate(delta);
+        if(editMode)    
+            rotate(delta);
         });
         function rotate(del){
             newInstance.rotation.y+= THREE.Math.degToRad(del/30);
@@ -1119,7 +1127,8 @@ function edit()
         
         document.removeEventListener("wheel",event => {
         const delta = Math.sign(event.deltaY);
-        rotate(delta);
+        if(editMode)    
+            rotate(delta);
         });
     }
     
@@ -1189,6 +1198,7 @@ function createOneRock(){
         rock = new THREE.Mesh(new THREE.OctahedronBufferGeometry(100,0), new THREE.MeshLambertMaterial({color: colors[rand2],
             flatShading: isFlatShading,
             }));
+        rock.position.y = -100;
         rocks4.push(rock);
 
     }
@@ -1228,7 +1238,7 @@ function aim(){
     if(v!== undefined)
             {
         geometry.vertices[1] = v;
-        target = v;
+        //target = v;
         llama.head.position.setFromMatrixPosition( llama.dummyHead.matrixWorld );
         if(!map[69])
             llama.head.lookAt(v);
