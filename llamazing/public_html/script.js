@@ -557,6 +557,7 @@ function createTrees() {
   
   
 }
+
 function addApples(temp){
     
         var color;
@@ -588,6 +589,21 @@ function addApples(temp){
             temp.add(treeap);
             applelist.push(treeap);
         }
+}
+function createRocks(){
+    for(var i = 0; i<20 ; i++){
+        var rand =  Math.random()-0.5;
+        var rand1 =  Math.random()-0.5;
+        var rand2 =  Math.random()-0.5;
+        var rand3 =  Math.random()+0.5;
+        var temp = createOneRock();
+        temp.scale.y *= rand3;
+        temp.scale.z *= rand3;
+        temp.scale.x *= rand3;
+        temp.position.x += rand *5000;
+        temp.position.z += rand1 *5000;
+        temp.rotation.y += rand2 *200;
+    }
 }
 Llama = function() 
 {
@@ -1404,6 +1420,6 @@ createLights();
 createWalls();
 createFloor();
 createTrees();
-
+createRocks();
 createLlama();
 loop();
