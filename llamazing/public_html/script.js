@@ -284,9 +284,9 @@ function setPickPosition(event) {
     
     
     if(map[16]){
-        moveSpeed = 3;
+        moveSpeed = 6;
     }else{
-        moveSpeed = 1;
+        moveSpeed = 3;
     }
         
     
@@ -1198,7 +1198,7 @@ function createOneRock(){
     {   rock = new THREE.Mesh(new THREE.ExtrudeBufferGeometry(shape,extrudeSettings), new THREE.MeshLambertMaterial({color: colors[rand2],
             flatShading: isFlatShading,
             }));
-        rock.posY = -50;
+        rock.translateY(-20);
         rocks2.push(rock);
         rock.castShadow = true;
     rock.receiveShadow = true;
