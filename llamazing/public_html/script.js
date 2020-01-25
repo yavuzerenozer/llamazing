@@ -1123,52 +1123,73 @@ function createOneTree(){
     return tree;
 }
 function createOneRock(){
-    var rocks = [];
-    var colors = [0xB08686,#666666];
-
+    var rock;
+    var rand = Math.floor(Math.random() * Math.floor(4));
+    var rand2 = Math.floor(Math.random() * Math.floor(4));
+    var colors = [(new THREE.Color(0xB08686)), (new THREE.Color(0x666666)), (new THREE.Color(0x5E757A)), (new THREE.Color(0x805E3B))];
+    var color = colors[rand];
     var length = 80, width = 60;
-
     var shape = new THREE.Shape();
-    shape.moveTo( 0,0 );
-    shape.lineTo( 0, width );
-    shape.lineTo( length, width );
-    shape.lineTo( length, 0 );
-    shape.lineTo( 0, 0 );
+        shape.moveTo( 0,0 );
+        shape.lineTo( 0, width );
+        shape.lineTo( length, width );
+        shape.lineTo( length, 0 );
+        shape.lineTo( 0, 0 );
 
-    var extrudeSettings = {
-	    steps: 2,
-	    depth: 110,
-	    bevelEnabled: true,
-	    bevelThickness: 20,
-	    bevelSize: 20,
-	    bevelOffset: 0,
-	    bevelSegments: 1
-    };
-    var rock1 = new THREE.Mesh(new THREE.IcosahedronBufferGeometry(100,0), new THREE.MeshLambertMaterial({color: 0Xffffff,
-        flatShading: isFlatShading,
-        }));
-    rock1.posY = -25;
+        var extrudeSettings = {
+	        steps: 2,
+	        depth: 110,
+	        bevelEnabled: true,
+	        bevelThickness: 20,
+	        bevelSize: 20,
+	        bevelOffset: 0,
+	        bevelSegments: 1
+        };
 
-    var rock2 = new THREE.Mesh(new THREE.ExtrudeBufferGeometry(shape,extrudeSettings), new THREE.MeshLambertMaterial({color: 0Xffffff,
-        flatShading: isFlatShading,
-        }));
-    rock2.posY = -40;
+    if(rand == 0)
+    {
+        
+        rock = new THREE.Mesh(new THREE.IcosahedronBufferGeometry(100,0), new THREE.MeshLambertMaterial({color: colors[rand2],
+            flatShading: isFlatShading,
+            }));
+        rock.posY = -25;
+        collidableMeshList.push(rock);        
+        scene.add(rock);
+        return rock;    
+    }
 
-    var rock3 = new THREE.Mesh(new THREE.DodecahedronBufferGeometry(100,0), new THREE.MeshLambertMaterial({color: 0Xffffff,
-        flatShading: isFlatShading,
-        }));
-    rock3.posY = -25;
-
-    var rock4 = new THREE.Mesh(new THREE.OctahedronBufferGeometry(100,0), new THREE.MeshLambertMaterial({color: 0XFFFFFF,
-        flatShading: isFlatShading,
-        }));
-    rock4.posY = -35;
-    rock4.posZ += 20;
-    rock4.rotZ = 45;    
-    collidableMeshList.push(rock4);    
+    else if (rand == 1)
+    {   rock = new THREE.Mesh(new THREE.ExtrudeBufferGeometry(shape,extrudeSettings), new THREE.MeshLambertMaterial({color: colors[rand2],
+            flatShading: isFlatShading,
+            }));
+        rock.posY = -50;
+        collidableMeshList.push(rock);        
+        scene.add(rock);
+        return rock; 
+    }
     
-    scene.add(rock4);
-    return rock4;    
+    else if(rand == 2)
+    {
+        rock = new THREE.Mesh(new THREE.DodecahedronBufferGeometry(100,0), new THREE.MeshLambertMaterial({color: colors[rand2],
+        flatShading: isFlatShading,
+        }));
+        rock.posY = -25;
+        collidableMeshList.push(rock);        
+        scene.add(rock);
+        return rock; 
+    }
+    
+    else{
+        rock = new THREE.Mesh(new THREE.OctahedronBufferGeometry(100,0), new THREE.MeshLambertMaterial({color: colors[rand2],
+            flatShading: isFlatShading,
+            }));
+        rock.posY = -35;
+        rock.posZ += 20;
+        collidableMeshList.push(rock);        
+        scene.add(rock);
+        return rock; 
+    }
+        
 
 }
 function closeHelpDiv1(){
