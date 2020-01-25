@@ -10,8 +10,9 @@ var scene,
   light,
   renderer,
   pointFiled,
-  treeIns,treeapple,
+  treeIns,treeapple,isRaining=true,
   container;
+var particleSystem;
 var listener,spitSound,walkingSound,music,music1,eatingSound,gulpingSound; 
 var instructionField2=document.getElementById('instructions2');
 var moveSpeed = 1;
@@ -116,7 +117,39 @@ var HEIGHT,
     spitObj = makeCube(new THREE.MeshLambertMaterial({color: 0xffffff,
     flatShading: isFlatShading}),2,2,2,0,0,0,0,0,0);
     organizeSounds();
+    rainSystem();
   }
+function rainSystem(){
+    var loader = new THREE.TextureLoader();
+    loader.crossOrigin = '';
+    particleCount = 14000;
+    var pMaterial = new THREE.PointCloudMaterial({
+      color: 0x5555FF,
+      size: 0.8,
+      map: loader.load(
+        "raindrop.png"
+       ),
+       blending: THREE.AdditiveBlending,
+       depthTest: false,
+       transparent: true
+    });
+
+    particles = new THREE.Geometry;
+    particles.name = "rain";
+    for (var i = 0; i < particleCount; i++) {
+        var pX = Math.random()*500 - 250,
+            pY = Math.random()*500 - 250,
+            pZ = Math.random()*500 - 250,
+            particle = new THREE.Vector3(pX, pY, pZ);
+        particle.velocity = {};
+        particle.velocity.y = 0;
+        
+        particles.vertices.push(particle);
+    }
+    particleSystem = new THREE.PointCloud(particles, pMaterial);
+    
+    scene.add(particleSystem);
+}
 function organizeSounds(){
     listener = new THREE.AudioListener();
     camera.add( listener );
@@ -168,6 +201,20 @@ function organizeSounds(){
         handleSpitUp();
         changed= false;}
  }
+ function simulateRain() {
+    var pCount = particleCount;
+    while (pCount--) {
+    var particle = particles.vertices[pCount];
+    if (particle.y < 0) {
+      particle.y = 200;
+      particle.velocity.y = 0;
+    }
+    particle.velocity.y -= Math.random() * .01;
+    particle.y += particle.velocity.y;
+    }
+    particles.verticesNeedUpdate = true;
+};
+
  var objs;    
  function rayVertex(){
      
@@ -183,8 +230,21 @@ function organizeSounds(){
     objs = raycaster.intersectObjects(objects);
     if(objs.length !== 0){
         //console.log(obj[0]);
-        targetObj = objs[0];
-        return objs[0].point;
+        for(var i = 0; i<objs.length; i++){
+            
+        
+            if(objs[i].object.geometry.name !== "rain"){
+                targetObj = objs[i];
+                console.log(targetObj.object);
+                break;
+            }
+            else{
+                console.log("asd");
+            }
+            
+        }
+        
+        return targetObj.point;
          //obj[0].object.material.emissive.setHex((time * 8) % 2 > 1 ? 0xFFFF00 : 0xFF0000);
     }
      
@@ -281,7 +341,11 @@ function setPickPosition(event) {
     {
         editMode = false;
         freeze = false;
-    } 
+    }
+    if(event.keyCode === 84)
+    {
+        isRaining = !isRaining;
+    }
     if(event.keyCode === 77){
         if(musicCount===0){
             music1.play();
@@ -813,6 +877,7 @@ Llama = function()
   this.target = new THREE.Object3D();
   this.target.position.set(0,0,1+0.1);
   this.headLightBody.add(this.target);
+  this.headLight.name = "headLight";
   this.headLight.target = this.target;
   this.head.add(this.headLightBody);
   this.head.add(this.face);
@@ -862,13 +927,8 @@ Llama = function()
   this.threegroup.add(this.legFR);
   this.threegroup.add(this.legBL);
   this.threegroup.add(this.legBR);
-
-  this.head.traverse(function(object) {
-    if (object instanceof THREE.Mesh) {
-      object.castShadow = true;
-      object.receiveShadow = false;
-    }
-  });
+  this.face.castShadow = true;
+  
   this.threegroup.traverse(function(object) {
     if (object instanceof THREE.Mesh) {
       object.castShadow = true;
@@ -1168,6 +1228,16 @@ function loop() {
     changeShading();
     distList = [];
     applelist.forEach(appleDist);
+    particleSystem.position.x = llama.threegroup.position.x;
+    particleSystem.position.z = llama.threegroup.position.z;
+    if(isRaining)
+        {    
+            simulateRain();
+            particleSystem.visible = true;
+        }
+    else{
+        particleSystem.visible = false;
+    }
     if(editMode)
     {
         document.getElementById("TreeButton").style.display="inline"
@@ -1346,7 +1416,7 @@ function closeHelpDiv1(){
 	if(flag_inst )
 	{
                 document.getElementById("helper").style.display=" none";
-		instructionField2.innerHTML = "<p>Press 'R' to activate/deactivate headlight</p><p>Press 'N' change day/night settings.</p><p>Press 'F' to switch between shadings.</p><p>Press 'C' to change the camera position.</p><p>Press 'Q' to change to edit mode.</p><p>Press 'M' to change/turn off music.</p> ";
+		instructionField2.innerHTML = "<p>Press 'R' to activate/deactivate headlight</p><p>Press 'N' change day/night settings.</p><p>Press 'F' to switch between shadings.</p><p>Press 'C' to change the camera position.</p><p>Press 'Q' to change to edit mode.</p><p>Press 'M' to change/turn off music.</p><p>Press 'T' to turn off/on rain.</p> ";
 	}
 	else if(!flag_inst)
 	{
