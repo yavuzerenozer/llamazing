@@ -545,6 +545,7 @@ function createTrees() {
   //treegrass.add(treeapple);
   //treegrass.add(treeapple1);
   //treegrass.add(treeapple2);
+  tree.name = "tree";
   treeIns = tree.clone();
   var tree2 = tree.clone();
   trees = [tree,tree2]; 
@@ -839,8 +840,8 @@ Llama = function()
   this.dummyHead .scale.set(.5,.5,.5);
   this.dummyHead .position.y+=35;
   this.dummyHead .position.z-=30;
-  this.dummyHead.material.transparent = true;
-  this.dummyHead.material.opacity = 0; 
+  
+  this.dummyHead.visible = false;
   this.legFL = makeCube(llamaMat, 10, 30, 10, 10, -20, 8, 0, 0, 0);
   this.legFR = this.legFL.clone();
   this.legFR.position.x = -10;
@@ -862,7 +863,12 @@ Llama = function()
   this.threegroup.add(this.legBL);
   this.threegroup.add(this.legBR);
 
-  
+  this.head.traverse(function(object) {
+    if (object instanceof THREE.Mesh) {
+      object.castShadow = true;
+      object.receiveShadow = false;
+    }
+  });
   this.threegroup.traverse(function(object) {
     if (object instanceof THREE.Mesh) {
       object.castShadow = true;
@@ -1206,7 +1212,15 @@ document.getElementById("TreeButton").addEventListener("click",function(){
 document.getElementById("RockButton").addEventListener("click",function(){ 
     if(!mouseEdit && editMode)newInstance = createOneRock();
 });
-document.addEventListener('mousedown', function(){mouseEdit = true;}, false);
+document.addEventListener('mousedown', event =>{if(event.button === 0){
+        mouseEdit = true;}
+        else if(event.button === 2)
+        {
+            if(objs[0].object.name === "rock" || objs[0].object.name === "tree"){
+                newInstance = objs[0].object;
+            }
+        }
+}, false);
 document.addEventListener('mouseup', function(){ mouseEdit = false;}, false);  
 document.addEventListener('mousemove', function(){if(editMode && mouseEdit ){
             newInstance.position.x = target.x;
@@ -1321,7 +1335,7 @@ function createOneRock(){
     rock.receiveShadow = true;
 
     }
-    
+    rock.name = "rock";
     collidableMeshList.push(rock);        
     scene.add(rock);
     return rock; 
