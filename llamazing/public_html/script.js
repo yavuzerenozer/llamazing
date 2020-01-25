@@ -357,7 +357,22 @@ function setPickPosition(event) {
     
 
 }
+function createBanner(){
+    var texture = THREE.ImageUtils.loadTexture( "jsImg.png" );
 
+    texture.wrapS = THREE.RepeatWrapping; 
+    texture.wrapT = THREE.RepeatWrapping;
+
+    texture.repeat.set( 1, 1 ); 
+    var geo = new THREE.PlaneGeometry( 200, 50 );
+    var material = new THREE.MeshBasicMaterial( {map: texture, side: THREE.DoubleSide} );
+    var pla = new THREE.Mesh( geo, material );
+    pla.position = llama.threegroup.position;
+    pla.position.x-= 1200;
+    pla.position.z+= 1200;
+    pla.rotation.y = THREE.Math.degToRad(150);
+    scene.add( pla );
+}
   function createLights() {
   light = new THREE.HemisphereLight(0xffffff, 0xb3858c, .8);
 
@@ -1486,4 +1501,5 @@ createFloor();
 createTrees();
 createRocks();
 createLlama();
+createBanner();
 loop();
