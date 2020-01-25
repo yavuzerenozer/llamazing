@@ -1219,7 +1219,6 @@ function createOneRock(){
         rock = new THREE.Mesh(new THREE.OctahedronBufferGeometry(100,0), new THREE.MeshLambertMaterial({color: colors[rand2],
             flatShading: isFlatShading,
             }));
-        rock.position.y = -100;
         rocks4.push(rock);
         rock.castShadow = true;
     rock.receiveShadow = true;
