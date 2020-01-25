@@ -12,7 +12,7 @@ var scene,
   pointFiled,
   treeIns,treeapple,
   container;
-var listener,spitSound,walkingSound,music,music1,eatingSound; 
+var listener,spitSound,walkingSound,music,music1,eatingSound,gulpingSound; 
 var instructionField2=document.getElementById('instructions2');
 var moveSpeed = 1;
 var point = 0;
@@ -115,6 +115,9 @@ var HEIGHT,
     controls.enabled = false;
     spitObj = makeCube(new THREE.MeshLambertMaterial({color: 0xffffff,
     flatShading: isFlatShading}),2,2,2,0,0,0,0,0,0);
+    organizeSounds();
+  }
+function organizeSounds(){
     listener = new THREE.AudioListener();
     camera.add( listener );
     spitSound = new THREE.Audio( listener );
@@ -148,8 +151,13 @@ var HEIGHT,
 	eatingSound.setVolume( 0.5 );
         
     });
-  }
-
+    gulpingSound =new THREE.Audio( listener );
+    audioLoader.load( 'sounds/gulp.wav', function( buffer ) {
+	gulpingSound.setBuffer( buffer );
+	gulpingSound.setVolume( 0.5 );
+        
+    });
+}
  function mouseDown(){
      handleSpitDown();
     changed = true;
@@ -950,6 +958,7 @@ Llama.prototype.eat = function(){
   }
   else{
       anim.kill();
+      gulpingSound.play();
       this.jaw.rotation.x = 0;
       TweenLite.to(this.upper.rotation,speed,{
 
