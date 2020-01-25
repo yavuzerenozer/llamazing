@@ -12,6 +12,7 @@ var scene,
   pointFiled,
   treeIns,treeapple,
   container;
+var listener,spitSound,walkingSound,music; 
 var instructionField2=document.getElementById('instructions2');
 var moveSpeed = 1;
 var point = 0;
@@ -114,6 +115,26 @@ var HEIGHT,
     controls.enabled = false;
     spitObj = makeCube(new THREE.MeshLambertMaterial({color: 0xffffff,
     flatShading: isFlatShading}),2,2,2,0,0,0,0,0,0);
+    listener = new THREE.AudioListener();
+    camera.add( listener );
+    spitSound = new THREE.Audio( listener );
+    var audioLoader = new THREE.AudioLoader();
+        audioLoader.load( 'sounds/spit.wav', function( buffer ) {
+	spitSound.setBuffer( buffer );
+	spitSound.setVolume( 0.5 );
+    });
+    walkingSound = new THREE.Audio( listener );
+    audioLoader.load( 'sounds/walk.wav', function( buffer ) {
+	walkingSound.setBuffer( buffer );
+	walkingSound.setVolume( 0.5 );
+    });
+    music = new THREE.Audio( listener );
+    audioLoader.load( 'sounds/happyLlama.mp3', function( buffer ) {
+	music.setBuffer( buffer );
+	music.setVolume( 0.5 );
+        music.setLoop(true);
+        music.play();
+    });
   }
 
  function mouseDown(){
@@ -812,6 +833,7 @@ Llama = function()
   }
   Llama.prototype.MoveForward = function()
 {
+    walkingSound.play();
     this.threegroup.position.x+=Math.sin(this.threegroup.rotation.y)*moveSpeed;
     
     this.threegroup.position.z+=Math.cos(this.threegroup.rotation.y)*moveSpeed;
@@ -838,7 +860,7 @@ Llama = function()
 };
 Llama.prototype.MoveBackward = function()
 {
-
+    walkingSound.play();
     this.threegroup.position.x-=Math.sin(this.threegroup.rotation.y)*moveSpeed;
     
     this.threegroup.position.z-=Math.cos(this.threegroup.rotation.y)*moveSpeed;
@@ -912,11 +934,11 @@ Llama.prototype.eat = function(){
       });
       
   }
-}
+};
 Llama.prototype.spit = function()
 {
     var sp = spitObj.clone();
-    
+    spitSound.play();
     sp.position.z = this.head.position.z+this.mouth.position.z;
     sp.position.x = this.head.position.x+this.mouth.position.x;
     sp.position.y = this.head.position.y+this.mouth.position.y;
