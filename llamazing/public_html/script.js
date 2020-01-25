@@ -1189,7 +1189,7 @@ function createOneRock(){
         rock = new THREE.Mesh(new THREE.OctahedronBufferGeometry(100,0), new THREE.MeshLambertMaterial({color: colors[rand2],
             flatShading: isFlatShading,
             }));
-        rocks4.push.rock;
+        rocks4.push(rock);
 
     }
     collidableMeshList.push(rock);        
@@ -1281,7 +1281,6 @@ function changeShading()
     flatShading: true
     });
     trees.forEach(forfunc);
-    rocks1.forEach(forfunc2);
     function forfunc(item,index){
         item.children[0].material =new THREE.MeshPhongMaterial({
     color: 0x95c088,
