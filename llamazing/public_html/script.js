@@ -12,7 +12,7 @@ var scene,
   pointFiled,
   treeIns,treeapple,
   container;
-var listener,spitSound,walkingSound,music; 
+var listener,spitSound,walkingSound,music,music1; 
 var instructionField2=document.getElementById('instructions2');
 var moveSpeed = 1;
 var point = 0;
@@ -133,7 +133,14 @@ var HEIGHT,
 	music.setBuffer( buffer );
 	music.setVolume( 0.5 );
         music.setLoop(true);
-        music.play();
+        //music.play();
+    });
+    music1 =new THREE.Audio( listener );
+    audioLoader.load( 'sounds/music.mp3', function( buffer ) {
+	music1.setBuffer( buffer );
+	music1.setVolume( 0.5 );
+        music1.setLoop(true);
+        music1.play();
     });
   }
 
@@ -208,6 +215,7 @@ function setPickPosition(event) {
   var morningColor;
   var changed = false;
   var eatTime = new Date().getTime();
+  var musicCount= 1;
   function handleMoveOneHit(event){
       if(event.keyCode === 70 && isFlatShading == true){ 
         isFlatShading = false;
@@ -260,6 +268,20 @@ function setPickPosition(event) {
         editMode = false;
         freeze = false;
     } 
+    if(event.keyCode === 77){
+        if(musicCount===0){
+            music1.play();
+            musicCount++;
+        }else if(musicCount===1){
+            music.play();
+            music1.stop();
+            musicCount++;
+        }
+        else{
+            music.stop();
+            musicCount = 0;
+        }
+    }
   }
   function handleMove(){
     if(map[87] && !freeze)
@@ -1273,7 +1295,7 @@ function closeHelpDiv1(){
 	if(flag_inst )
 	{
                 document.getElementById("helper").style.display=" none";
-		instructionField2.innerHTML = "<p>Press 'R' to activate/deactivate headlight</p><p>Press 'N' change day/night settings.</p><p>Press 'F' to switch between shadings.</p><p>Press 'C' to change the camera position.</p><p>Press 'Q' to change to edit mode.</p> ";
+		instructionField2.innerHTML = "<p>Press 'R' to activate/deactivate headlight</p><p>Press 'N' change day/night settings.</p><p>Press 'F' to switch between shadings.</p><p>Press 'C' to change the camera position.</p><p>Press 'Q' to change to edit mode.</p><p>Press 'M' to change/turn off music.</p> ";
 	}
 	else if(!flag_inst)
 	{
