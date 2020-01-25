@@ -21,6 +21,10 @@ var collidableMeshList = [];
 var applelist = [];
 var INTERSECTED;
 var trees;
+var rocks1 = [];
+var rocks2 = [];
+var rocks3 = [];
+var rocks4 = [];
 var arrowList = [];
 var minAppleIx;
 var directionList = [];  
@@ -1082,19 +1086,18 @@ function loop() {
     requestAnimationFrame(loop);
 }
 var mouseEdit = false;
-var newTree;
-var newRock;
+var newInstance;
 document.getElementById("TreeButton").addEventListener("click",function(){ 
-    if(!mouseEdit && editMode)newTree = createOneTree();
+    if(!mouseEdit && editMode)newInstance = createOneTree();
 });
 document.getElementById("RockButton").addEventListener("click",function(){ 
-    if(!mouseEdit && editMode)newTree = createOneRock();
+    if(!mouseEdit && editMode)newInstance = createOneRock();
 });
 document.addEventListener('mousedown', function(){mouseEdit = true;}, false);
 document.addEventListener('mouseup', function(){ mouseEdit = false;}, false);  
 document.addEventListener('mousemove', function(){if(editMode && mouseEdit){
-            newTree.position.x = target.x+10;
-            newTree.position.z = target.z+10;}
+            newInstance.position.x = target.x+10;
+            newInstance.position.z = target.z+10;}
         });
 function edit()
 {
@@ -1109,7 +1112,7 @@ function edit()
         rotate(delta);
         });
         function rotate(del){
-            newTree.rotation.y+= THREE.Math.degToRad(del/30);
+            newInstance.rotation.y+= THREE.Math.degToRad(del/30);
         }
         
             
@@ -1136,7 +1139,6 @@ function createOneRock(){
     var rand = Math.floor(Math.random() * Math.floor(4));
     var rand2 = Math.floor(Math.random() * Math.floor(4));
     var colors = [(new THREE.Color(0xB08686)), (new THREE.Color(0x666666)), (new THREE.Color(0x5E757A)), (new THREE.Color(0x805E3B))];
-    var color = colors[rand];
     var length = 80, width = 60;
     var shape = new THREE.Shape();
         shape.moveTo( 0,0 );
@@ -1162,9 +1164,8 @@ function createOneRock(){
             flatShading: isFlatShading,
             }));
         rock.posY = -25;
-        collidableMeshList.push(rock);        
-        scene.add(rock);
-        return rock;    
+        rocks1.push(rock);
+       
     }
 
     else if (rand == 1)
@@ -1172,9 +1173,7 @@ function createOneRock(){
             flatShading: isFlatShading,
             }));
         rock.posY = -50;
-        collidableMeshList.push(rock);        
-        scene.add(rock);
-        return rock; 
+        rocks2.push(rock);
     }
     
     else if(rand == 2)
@@ -1182,22 +1181,20 @@ function createOneRock(){
         rock = new THREE.Mesh(new THREE.DodecahedronBufferGeometry(100,0), new THREE.MeshLambertMaterial({color: colors[rand2],
         flatShading: isFlatShading,
         }));
-        rock.posY = -25;
-        collidableMeshList.push(rock);        
-        scene.add(rock);
-        return rock; 
+        rocks3.push(rock);
+
     }
     
     else{
         rock = new THREE.Mesh(new THREE.OctahedronBufferGeometry(100,0), new THREE.MeshLambertMaterial({color: colors[rand2],
             flatShading: isFlatShading,
             }));
-        rock.posY = -35;
-        rock.posZ += 20;
-        collidableMeshList.push(rock);        
-        scene.add(rock);
-        return rock; 
+        rocks4.push.rock;
+
     }
+    collidableMeshList.push(rock);        
+    scene.add(rock);
+    return rock; 
         
 
 }
@@ -1284,6 +1281,7 @@ function changeShading()
     flatShading: true
     });
     trees.forEach(forfunc);
+    rocks1.forEach(forfunc2);
     function forfunc(item,index){
         item.children[0].material =new THREE.MeshPhongMaterial({
     color: 0x95c088,
@@ -1291,7 +1289,18 @@ function changeShading()
         item.material = new THREE.MeshPhongMaterial({
     color: 0x874a5c,
     flatShading: true});
-    }
+    }    
+    rocks1.forEach(forfunc2);
+    rocks2.forEach(forfunc2);
+    rocks3.forEach(forfunc2);
+    rocks4.forEach(forfunc2);
+    function forfunc2(item)
+    {
+        var color = item.material.color;
+        item.material = new THREE.MeshPhongMaterial({
+            color: color,
+            flatShading: true});
+            }
     }
     else{
         floor.material = new THREE.MeshLambertMaterial({
@@ -1306,9 +1315,22 @@ function changeShading()
     flatShading: false});
     item.material = new THREE.MeshLambertMaterial({
     color: 0x874a5c,
-    flatShading: true});
+    flatShading: false});
     }
+    rocks1.forEach(forfunc2);
+    rocks2.forEach(forfunc2);
+    rocks3.forEach(forfunc2);
+    rocks4.forEach(forfunc2);
+    function forfunc2(item)
+    {
+        var color = item.material.color;
+        item.material = new THREE.MeshLambertMaterial({
+            color: color,
+            flatShading: false});
+            }
     }
+
+    
 }
 function distanceVector( v1, v2 )
 {
