@@ -1074,8 +1074,12 @@ function loop() {
 }
 var mouseEdit = false;
 var newTree;
+var newRock;
 document.getElementById("TreeButton").addEventListener("click",function(){ 
     if(!mouseEdit && editMode)newTree = createOneTree();
+});
+document.getElementById("RockButton").addEventListener("click",function(){ 
+    if(!mouseEdit && editMode)newTree = createOneRock();
 });
 document.addEventListener('mousedown', function(){mouseEdit = true;}, false);
 document.addEventListener('mouseup', function(){ mouseEdit = false;}, false);  
@@ -1117,6 +1121,55 @@ function createOneTree(){
     scene.add(tree);
     
     return tree;
+}
+function createOneRock(){
+    var rocks = [];
+    var colors = [0xB08686,#666666];
+
+    var length = 80, width = 60;
+
+    var shape = new THREE.Shape();
+    shape.moveTo( 0,0 );
+    shape.lineTo( 0, width );
+    shape.lineTo( length, width );
+    shape.lineTo( length, 0 );
+    shape.lineTo( 0, 0 );
+
+    var extrudeSettings = {
+	    steps: 2,
+	    depth: 110,
+	    bevelEnabled: true,
+	    bevelThickness: 20,
+	    bevelSize: 20,
+	    bevelOffset: 0,
+	    bevelSegments: 1
+    };
+    var rock1 = new THREE.Mesh(new THREE.IcosahedronBufferGeometry(100,0), new THREE.MeshLambertMaterial({color: 0Xffffff,
+        flatShading: isFlatShading,
+        }));
+    rock1.posY = -25;
+
+    var rock2 = new THREE.Mesh(new THREE.ExtrudeBufferGeometry(shape,extrudeSettings), new THREE.MeshLambertMaterial({color: 0Xffffff,
+        flatShading: isFlatShading,
+        }));
+    rock2.posY = -40;
+
+    var rock3 = new THREE.Mesh(new THREE.DodecahedronBufferGeometry(100,0), new THREE.MeshLambertMaterial({color: 0Xffffff,
+        flatShading: isFlatShading,
+        }));
+    rock3.posY = -25;
+
+    var rock4 = new THREE.Mesh(new THREE.OctahedronBufferGeometry(100,0), new THREE.MeshLambertMaterial({color: 0XFFFFFF,
+        flatShading: isFlatShading,
+        }));
+    rock4.posY = -35;
+    rock4.posZ += 20;
+    rock4.rotZ = 45;    
+    collidableMeshList.push(rock4);    
+    
+    scene.add(rock4);
+    return rock4;    
+
 }
 function closeHelpDiv1(){
 	if(flag_inst )
