@@ -235,11 +235,7 @@ function organizeSounds(){
         
             if(objs[i].object.geometry.name !== "rain"){
                 targetObj = objs[i];
-                console.log(targetObj.object);
                 break;
-            }
-            else{
-                console.log("asd");
             }
             
         }
@@ -290,6 +286,7 @@ function setPickPosition(event) {
   var changed = false;
   var eatTime = new Date().getTime();
   var musicCount= 1;
+  var dayCount = 0;
   function handleMoveOneHit(event){
       if(event.keyCode === 70 && isFlatShading == true){ 
         isFlatShading = false;
@@ -309,26 +306,36 @@ function setPickPosition(event) {
     }else if(event.keyCode === 82 && llama.headLightBody.visible == false){ 
         llama.headLightBody.visible = true;
     }
-    if(event.keyCode === 78 && shadowLight.visible == true){ 
-        shadowLight.visible = false;
-        light.intensity = .3;
-        var world = document.querySelector('#world');
-        world.style.setProperty("background","#000000");
-        
-        for(i= 1; i<5; i++){
-            env.children[i].material.emissive = [0,0,0];
+    if(event.keyCode === 78){
+        if(dayCount === 0){
+            light.intensity = .4;
+            light.color.setHex( 0xffff00 );
+            dayCount++;
+            var world = document.querySelector('#world');
+            world.style.setProperty("background","#eb9336");
+
+            for(i= 1; i<5; i++){
+                env.children[i].material.emissive = [1,1,0];
+            }
+            dayCount=1;
         }
-        
-    }else if(event.keyCode === 78 && shadowLight.visible == false){ 
+        else if(dayCount === 1){
+            
+            shadowLight.visible = false;
+            light.intensity = .3;
+            light.color.setHex( 0xffffff );
+            var world = document.querySelector('#world');
+            world.style.setProperty("background","#000000");
+            dayCount=2;
+        }
+    else if( dayCount === 2){ 
         shadowLight.visible = true;
         light.intensity = .8;
         var world = document.querySelector('#world');
         world.style.setProperty("background","#87ceeb");
-        for(i= 1; i<5; i++){
-            env.children[i].material.emissive = morningColor ;
-        }
-        console.log(env);
-    }
+        
+        dayCount = 0;
+    }}
     if(event.keyCode === 73){
         closeHelpDiv1();
         flag_inst = !flag_inst; 
@@ -439,7 +446,7 @@ function createBanner(){
 }
   function createLights() {
   light = new THREE.HemisphereLight(0xffffff, 0xb3858c, .8);
-
+ 
   shadowLight = new THREE.DirectionalLight(0xffffff, .8,100);
   shadowLight.position.set(10000, 10000, 5000);
   shadowLight.castShadow = true;
@@ -477,7 +484,9 @@ function createWalls(){
     var wall1 = new THREE.Mesh(new THREE.PlaneBufferGeometry(20000, 20000), new THREE.MeshLambertMaterial({
     color: 0X000000,
     flatShading: isFlatShading,
-    emissive: 0X87cfeb
+    emissive: 0Xffffff,
+    opacity: 0,
+    transparent: 0
   }));
     morningColor = wall1.material.emissive; 
     wall1.position.y = -40;
@@ -497,6 +506,7 @@ function createWalls(){
     env.add(wall1);
     env.add(wall3);
     env.add(wall4);
+    
 }
 var grass;
 function generateTexture() {
