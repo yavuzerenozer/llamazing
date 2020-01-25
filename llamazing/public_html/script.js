@@ -12,7 +12,7 @@ var scene,
   pointFiled,
   treeIns,treeapple,
   container;
-var listener,spitSound,walkingSound,music,music1; 
+var listener,spitSound,walkingSound,music,music1,eatingSound; 
 var instructionField2=document.getElementById('instructions2');
 var moveSpeed = 1;
 var point = 0;
@@ -124,7 +124,7 @@ var HEIGHT,
 	spitSound.setVolume( 0.5 );
     });
     walkingSound = new THREE.Audio( listener );
-    audioLoader.load( 'sounds/walk.wav', function( buffer ) {
+    audioLoader.load( 'sounds/walk.mp3', function( buffer ) {
 	walkingSound.setBuffer( buffer );
 	walkingSound.setVolume( 0.5 );
     });
@@ -141,6 +141,12 @@ var HEIGHT,
 	music1.setVolume( 0.5 );
         music1.setLoop(true);
         music1.play();
+    });
+    eatingSound =new THREE.Audio( listener );
+    audioLoader.load( 'sounds/eat.wav', function( buffer ) {
+	eatingSound.setBuffer( buffer );
+	eatingSound.setVolume( 0.5 );
+        
     });
   }
 
@@ -327,8 +333,10 @@ function setPickPosition(event) {
     
     
     if(map[16]){
+        walkingSound.setPlaybackRate(4);
         moveSpeed = 6;
     }else{
+        walkingSound.setPlaybackRate(2);
         moveSpeed = 3;
     }
         
@@ -917,7 +925,8 @@ eatFlag = -1;
 var eatAnim;
 Llama.prototype.eat = function(){
   var speed = 1*globalSpeedRate;
-  
+  if(!eatingSound.isPlaying)
+    eatingSound.play();
   if(eatFlag === 1)
   {
      TweenLite.to(this.upper.rotation,speed,{
@@ -1035,7 +1044,9 @@ Llama.prototype.moveFeet = function() {
     });
     }
 Llama.prototype.stableFeet = function()
-{
+{   
+    if(walkingSound.isPlaying)
+        walkingSound.stop();
     var speed = .7*globalSpeedRate;
   //timeFire = Math.round(s * 10);
   TweenLite.to(this.legFL.rotation,speed,{
