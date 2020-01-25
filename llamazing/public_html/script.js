@@ -79,6 +79,7 @@ var HEIGHT,
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize(WIDTH, HEIGHT);
     renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     container = document.getElementById('world');
     container.appendChild(renderer.domElement);
     windowHalfX = WIDTH / 2;
@@ -433,11 +434,11 @@ scene.add(temp);
 */
 
 }	
-var redAppleMat = new THREE.MeshLambertMaterial({
+var redAppleMat = new THREE.MeshPhongMaterial({
     color: 0xff0000,
     flatShading: isFlatShading
   });
-var greenAppleMat = new THREE.MeshLambertMaterial({
+var greenAppleMat = new THREE.MeshPhongMaterial({
     color: 0x659e20,
     flatShading: isFlatShading
   });
@@ -451,6 +452,7 @@ function createTrees() {
     flatShading: isFlatShading
   }), 120, 80, 120, 0, 105, 0, 0, 0, 0);
   treeapple = makeCube(redAppleMat, 10, 10, 10, 0, 105, 0, 0, 0, 0);
+  treeapple.receiveShadow = true;
   var treeapple1 = treeapple.clone();
   
   treeapple1.position.z-=20;
@@ -460,6 +462,10 @@ function createTrees() {
   treeapple2.position.y-=20;
   treeapple2.position.z-=70;
   tree.add(treegrass);
+  tree.castShadow = true;
+  tree.receiveShadow = true;
+  treegrass.castShadow = true;
+  treegrass.receiveShadow = true;
   //treegrass.add(treeapple);
   //treegrass.add(treeapple1);
   //treegrass.add(treeapple2);
@@ -470,22 +476,32 @@ function createTrees() {
     color: 0xb05307,
     flatShading: isFlatShading
   }), 20, 520, 20, -120, 25, 170, 0, 0, 0);
-  var bTreeGrass = makeCube(new THREE.MeshLambertMaterial({
+  var bTreeGrass = makeCube(new THREE.MeshPhongMaterial({
     color: 0x95c088,
     flatShading: isFlatShading
   }), 40, 20, 100, 0, 250, -60, THREE.Math.degToRad(-20), 0, 0);
-  var bTreeGrass1 = makeCube(new THREE.MeshLambertMaterial({
+  var bTreeGrass1 = makeCube(new THREE.MeshPhongMaterial({
     color: 0x95c088,
     flatShading: isFlatShading
   }), 100, 20, 40, -60, 250, 0, 0, 0, THREE.Math.degToRad(20));
-  var bTreeGrass2 = makeCube(new THREE.MeshLambertMaterial({
+  var bTreeGrass2 = makeCube(new THREE.MeshPhongMaterial({
     color: 0x95c088,
     flatShading: isFlatShading
   }), 100, 20, 40, 60, 250, 0, 0, 0, THREE.Math.degToRad(-20));
-  var bTreeGrass3 = makeCube(new THREE.MeshLambertMaterial({
+  var bTreeGrass3 = makeCube(new THREE.MeshPhongMaterial({
     color: 0x95c088,
     flatShading: isFlatShading
   }), 40, 20, 100, 0, 250, 60, THREE.Math.degToRad(20), 0, 0);
+  bTree.castShadow = true;
+  bTreeGrass.castShadow = true;
+  bTreeGrass1.castShadow = true;
+  bTreeGrass2.castShadow = true;
+  bTreeGrass3.castShadow = true;
+  bTree.receiveShadow = true;
+  bTreeGrass.receiveShadow = true;
+  bTreeGrass1.receiveShadow = true;
+  bTreeGrass2.receiveShadow = true;
+  bTreeGrass3.receiveShadow = true;
   bTree.add(bTreeGrass);
   bTree.add(bTreeGrass1);
   bTree.add(bTreeGrass2);
@@ -527,7 +543,7 @@ function createTrees() {
           applelist.push(ban.children[1]);
           applelist.push(ban.children[2]);
       }
-      temp.position.y += (Math.random()-0.25)*70;
+      temp.position.y += (Math.random()-0.25)*35;
       temp.position.x += rand *5000;
       temp.position.z += rand1 *5000;
       temp.rotation.y += rand2 *200;
@@ -687,11 +703,10 @@ Llama = function()
   this.headLight = new THREE.SpotLight(0xf9ff79);
   this.headLight.position.set(0,0,1);
   this.headLight.castShadow = true;
-  this.headLight.shadow.mapSize.width = 1024;
-  this.headLight.shadow.mapSize.height = 1024;
-  this.headLight.shadow.camera.near = 500;
-  this.headLight.shadow.camera.far = 4000;
-  this.headLight.shadow.camera.fov = 30;
+  this.headLight.shadow.mapSize.width = 512;
+  this.headLight.shadow.mapSize.height = 512;
+  this.headLight.shadow.camera.near = 0.5;
+  this.headLight.shadow.camera.far = 10000;
   this.headLight.angle = THREE.Math.degToRad(10);
   
   this.headLightBody = makeCube(blackMat, 10,10,40,0,55,60,0,0,0);
@@ -1174,6 +1189,8 @@ function createOneRock(){
             }));
         rock.posY = -25;
         rocks1.push(rock);
+        rock.castShadow = true;
+    rock.receiveShadow = true;
        
     }
 
@@ -1183,6 +1200,8 @@ function createOneRock(){
             }));
         rock.posY = -50;
         rocks2.push(rock);
+        rock.castShadow = true;
+    rock.receiveShadow = true;
     }
     
     else if(rand == 2)
@@ -1191,6 +1210,8 @@ function createOneRock(){
         flatShading: isFlatShading,
         }));
         rocks3.push(rock);
+        rock.castShadow = true;
+    rock.receiveShadow = true;
 
     }
     
@@ -1200,8 +1221,11 @@ function createOneRock(){
             }));
         rock.position.y = -100;
         rocks4.push(rock);
+        rock.castShadow = true;
+    rock.receiveShadow = true;
 
     }
+    
     collidableMeshList.push(rock);        
     scene.add(rock);
     return rock; 
@@ -1317,6 +1341,14 @@ function changeShading()
     flatShading: false
         
     });
+    function forfunc3(item,index){
+        item.children[0].material =new THREE.MeshLambertMaterial({
+    color: 0x95c088,
+    flatShading: false});
+    item.material = new THREE.MeshLambertMaterial({
+    color: 0x874a5c,
+    flatShading: false});
+    }
     trees.forEach(forfunc);
     function forfunc(item,index){
         item.children[0].material =new THREE.MeshLambertMaterial({
