@@ -352,15 +352,16 @@ function createWalls(){
     env.add(wall3);
     env.add(wall4);
 }
+var grass;
 function generateTexture() {
 
     var canvas = document.createElement( 'canvas' );
-    canvas.width = 15000;
-    canvas.height = 15000;
+    canvas.width = 256;
+    canvas.height = 256;
 
     var context = canvas.getContext( '2d' );
 
-    for ( var i = 0; i < 1000000; i ++ ) {
+    for ( var i = 0; i < 6000; i ++ ) {
 
         context.fillStyle = 'hsl(0,0%,' + ( Math.random() * 50 + 50 ) + '%)';
         context.beginPath();
@@ -376,14 +377,14 @@ function generateTexture() {
 
 }
 
-function createGrass() {
+function createGrass(x,y) {
 var grass = makeCube(new THREE.MeshLambertMaterial({
 color: 0x146f14,
-flatShading: isFlatShading}),1,4,1, -100,-30, 170, 0,0,0);
+flatShading: isFlatShading}),1,0,1, -100,-30, 170, 0,0,0);
 
 grasses = [grass]
 
-for(i = 0; i < 10000; i++)
+/*for(i = 0; i < 10000; i++)
 {
 var temp;
 var rand =  Math.random()-0.5;
@@ -396,17 +397,18 @@ temp.position.y += (Math.random()/2-0.5)*40;
 temp.position.x += rand *3000;
 temp.position.z += rand1 *3000;
 temp.rotation.y += rand2 *200;
-grasses.push(temp);      
-scene.add(grasses[i+1]);
-}
-/*var geometry = new THREE.PlaneBufferGeometry( 5000, 5000 );
-
+//grasses.push(temp);      
+scene.add(temp);
+}*/
+    
+/*var geometry = new THREE.PlaneBufferGeometry( 1000, 1000 );
+    
     var texture = new THREE.CanvasTexture( generateTexture() );
-
-    for ( var i = 0; i < 15; i ++ ) {
+    
+    for ( var i = 0; i < 150; i ++ ) {
 
         var material = new THREE.MeshBasicMaterial( {
-            color: new THREE.Color().setHSL( 0.3, 0.75, ( i / 15 ) * 0.4 + 0.1 ),
+            color: new THREE.Color().setHSL( 0.3, 0.75, ( i / 150 ) * 0.4 + 0.1 ),
             map: texture,
             depthTest: true,
             depthWrite: false,
@@ -415,9 +417,11 @@ scene.add(grasses[i+1]);
 
         var mesh = new THREE.Mesh( geometry, material );
 
-        mesh.position.y = (i * 0.25)-36;
+        mesh.position.y = (i * 0.1)-36;
+        mesh.position.x+=x*1000;
+        mesh.position.z+=y*1000;
         mesh.rotation.x = - Math.PI / 2;
-
+        
         scene.add( mesh );
 
     }
@@ -999,7 +1003,12 @@ var geometry = new THREE.Geometry()
 function createLlama(){
     llama = new Llama();
     scene.add(llama.threegroup);
-    
+    document.addEventListener("wheel",
+            event => {
+                if(!editMode){
+                    const delta = Math.sign(event.deltaY);
+                    llama.headLight.intensity-= delta/10;
+    }});
     controlsLock = new THREE.PointerLockControls( llama.head);
     controlsLock.addEventListener( 'lock', function () {
 
@@ -1326,12 +1335,13 @@ function render() {
   arrow.computeLineDistances();
   curve.computeLineDistances();
   renderer.render(scene, camera);
+  
 }
 init();
 createLights();
 createWalls();
 createFloor();
 createTrees();
-createGrass();
+
 createLlama();
 loop();
