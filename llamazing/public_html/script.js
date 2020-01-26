@@ -397,9 +397,10 @@ function setPickPosition(event) {
     }
     if((!map[69]|| new Date().getTime() > eatTime+2000)  && eatFlag ===1 ){
         if(new Date().getTime() > eatTime+2000){
+            color = new THREE.Color(0xffff00)
             removeEntity(applelist[minAppleIx]);
             applelist.splice(minAppleIx,1);
-            if((applelist[minAppleIx].material.id) == 16)point = point + 3;
+            if(applelist[minAppleIx].material.color.equals(color))point = point + 3;
 			else
             point++;
         }
@@ -739,6 +740,7 @@ function addApples(temp){
             }
             temp.add(treeap);
             applelist.push(treeap);
+
         }
 }
 function createRocks(){
@@ -1524,6 +1526,34 @@ function changeShading()
             color: color,
             flatShading: true});
             }
+    applelist.forEach(forfunc3);        
+    function forfunc3(item)
+    {
+            var color = new THREE.Color(0xffff00)
+            var color1 = redAppleMat.color;
+            var color2 = greenAppleMat.color;
+            if(item.material.color.equals(color))
+            {
+                item.material = new THREE.MeshPhongMaterial({
+                    color: color,
+                    flatShading: true});
+                    }
+            
+            else if(item.material.color.equals(color1))
+            {
+                item.material = new THREE.MeshPhongMaterial({
+                    color: color1,
+                    flatShading: true});
+                    }
+            
+            else
+            {
+                item.material = new THREE.MeshPhongMaterial({
+                    color: color2,
+                    flatShading: true});
+                    }
+
+    }        
     }
     else{
         floor.material = new THREE.MeshLambertMaterial({
@@ -1531,14 +1561,7 @@ function changeShading()
     flatShading: false
         
     });
-    function forfunc3(item,index){
-        item.children[0].material =new THREE.MeshLambertMaterial({
-    color: 0x95c088,
-    flatShading: false});
-    item.material = new THREE.MeshLambertMaterial({
-    color: 0x874a5c,
-    flatShading: false});
-    }
+    
     trees.forEach(forfunc);
     function forfunc(item,index){
         item.children[0].material =new THREE.MeshLambertMaterial({
@@ -1559,6 +1582,35 @@ function changeShading()
             color: color,
             flatShading: false});
             }
+
+    applelist.forEach(forfunc3);        
+    function forfunc3(item)
+    {
+            var color = new THREE.Color(0xffff00)
+            var color1 = redAppleMat.color;
+            var color2 = greenAppleMat.color;
+            if(item.material.color.equals(color))
+            {
+                item.material = new THREE.MeshLambertMaterial({
+                    color: color,
+                    flatShading: false});
+                    }
+            
+            else if(item.material.color.equals(color1))
+            {
+                item.material = new THREE.MeshLambertMaterial({
+                    color: color1,
+                    flatShading: false});
+                    }
+            
+            else
+            {
+                item.material = new THREE.MeshLambertMaterial({
+                    color: color2,
+                    flatShading: false});
+                    }
+
+    } 
     }
 
     
