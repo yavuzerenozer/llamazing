@@ -20,7 +20,7 @@ var point = 0;
 var isFlatShading = true;
 var mousedown = false;
 var collidableMeshList = [];
-var applelist = [];
+var fruitlist = [];
 var INTERSECTED;
 var trees;
 var rocks1 = [];
@@ -398,9 +398,9 @@ function setPickPosition(event) {
     if((!map[69]|| new Date().getTime() > eatTime+2000)  && eatFlag ===1 ){
         if(new Date().getTime() > eatTime+2000){
             color = new THREE.Color(0xffff00)
-            removeEntity(applelist[minAppleIx]);
-            applelist.splice(minAppleIx,1);
-            if(applelist[minAppleIx].material.color.equals(color))point = point + 3;
+            removeEntity(fruitlist[minAppleIx]);
+            fruitlist.splice(minAppleIx,1);
+            if(fruitlist[minAppleIx].material.color.equals(color))point = point + 3;
 			else
             point++;
         }
@@ -460,7 +460,7 @@ function createBanner(){
   shadowLight.shadow.camera.right = 3200;
   shadowLight.shadow.camera.top = 2500;
 
-  //scene.add(backLight);
+  scene.add(helper);
   scene.add(light);
   scene.add(shadowLight);
 }
@@ -599,7 +599,7 @@ function createTrees() {
     flatShading: isFlatShading
   }), 20, 180, 20, -120, 25, 170, 0, 0, 0);
   var treegrass = makeCube(new THREE.MeshLambertMaterial({
-    color: 0x95c088,
+    color: 0x418b17,
     flatShading: isFlatShading
   }), 120, 80, 120, 0, 105, 0, 0, 0, 0);
   treeapple = makeCube(redAppleMat, 10, 10, 10, 0, 105, 0, 0, 0, 0);
@@ -689,11 +689,12 @@ function createTrees() {
       }
       else{
           temp = bTree.clone();
+          
           var ban = bananas.clone();
           temp.add(ban);
-          applelist.push(ban.children[0]);
-          applelist.push(ban.children[1]);
-          applelist.push(ban.children[2]);
+          fruitlist.push(ban.children[0]);
+          fruitlist.push(ban.children[1]);
+          fruitlist.push(ban.children[2]);
       }
       temp.position.y += (Math.random()-0.25)*35;
       temp.position.x += rand *5000;
@@ -739,7 +740,7 @@ function addApples(temp){
                 treeap.position.x+= (Math.random()-0.5) *110;
             }
             temp.add(treeap);
-            applelist.push(treeap);
+            fruitlist.push(treeap);
 
         }
 }
@@ -1099,7 +1100,7 @@ Llama.prototype.spit = function()
                 
                 var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
         
-                var collisionResults = ray.intersectObjects( applelist );
+                var collisionResults = ray.intersectObjects( fruitlist );
                 if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ) 
                         {scene.remove(sp);
                          INTERSECTED = collisionResults[0].object;
@@ -1239,7 +1240,7 @@ function loop() {
     handleMove();
     changeShading();
     distList = [];
-    applelist.forEach(appleDist);
+    fruitlist.forEach(appleDist);
     particleSystem.position.x = llama.threegroup.position.x;
     particleSystem.position.z = llama.threegroup.position.z;
     if(isRaining)
@@ -1466,7 +1467,7 @@ function aim(){
                 }
             }
             var vec = new THREE.Vector3();
-            vec.setFromMatrixPosition(applelist[minAppleIx].matrixWorld);
+            vec.setFromMatrixPosition(fruitlist[minAppleIx].matrixWorld);
             llama.head.lookAt(vec);
         }
         scene.add(llama.head);
@@ -1507,13 +1508,38 @@ function changeShading()
     flatShading: true
     });
     trees.forEach(forfunc);
-    function forfunc(item,index){
+    function forfunc(item){
+        if(item.children.length >6){
         item.children[0].material =new THREE.MeshPhongMaterial({
-    color: 0x95c088,
+    color: 0x38761D,
     flatShading: true});
+
         item.material = new THREE.MeshPhongMaterial({
     color: 0x874a5c,
-    flatShading: true});
+    flatShading: true});}
+    else
+    {
+        item.children[0].material =new THREE.MeshPhongMaterial({
+            color: 0x95c088,
+            flatShading: true});
+            if(item.children[1] != undefined)    
+                {
+                    item.children[1].material =new THREE.MeshPhongMaterial({
+                        color: 0x95c088,
+                        flatShading: true});
+                        item.children[2].material =new THREE.MeshPhongMaterial({
+                            color: 0x95c088,
+                            flatShading: true});
+                            item.children[3].material =new THREE.MeshPhongMaterial({
+                                color: 0x95c088,
+                                flatShading: true});
+                }
+
+        item.material = new THREE.MeshPhongMaterial({
+            color: 0x874a5c,
+            flatShading: true});
+
+    }
     }    
     rocks1.forEach(forfunc2);
     rocks2.forEach(forfunc2);
@@ -1526,7 +1552,7 @@ function changeShading()
             color: color,
             flatShading: true});
             }
-    applelist.forEach(forfunc3);        
+    fruitlist.forEach(forfunc3);        
     function forfunc3(item)
     {
             var color = new THREE.Color(0xffff00)
@@ -1563,13 +1589,37 @@ function changeShading()
     });
     
     trees.forEach(forfunc);
-    function forfunc(item,index){
+    function forfunc(item){
+        if(item.children.length>7)
+        {
         item.children[0].material =new THREE.MeshLambertMaterial({
-    color: 0x95c088,
+    color: 0x38761D,
     flatShading: false});
     item.material = new THREE.MeshLambertMaterial({
     color: 0x874a5c,
-    flatShading: false});
+    flatShading: false});}
+        else
+        {
+            item.children[0].material =new THREE.MeshLambertMaterial({
+                color: 0x95c088,
+                flatShading: false});
+            if(item.children[1] != undefined)    
+                {
+                    item.children[1].material =new THREE.MeshLambertMaterial({
+                        color: 0x95c088,
+                        flatShading: false});
+                        item.children[2].material =new THREE.MeshLambertMaterial({
+                            color: 0x95c088,
+                            flatShading: false});
+                            item.children[3].material =new THREE.MeshLambertMaterial({
+                                color: 0x95c088,
+                                flatShading: false});
+                }      
+
+            item.material = new THREE.MeshLambertMaterial({
+                color: 0x874a5c,
+                flatShading: false});
+        }
     }
     rocks1.forEach(forfunc2);
     rocks2.forEach(forfunc2);
@@ -1583,7 +1633,7 @@ function changeShading()
             flatShading: false});
             }
 
-    applelist.forEach(forfunc3);        
+    fruitlist.forEach(forfunc3);        
     function forfunc3(item)
     {
             var color = new THREE.Color(0xffff00)
