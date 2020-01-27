@@ -19,10 +19,12 @@
   text-align : center;
   line-height : 1.5;
   user-select: none;
+  cursor:none;
 }
 .lightInstructions {
   color:#f89a78;
   font-size:.9em; 
+  cursor:none;
 }
 #instructions2{
   position:absolute;
@@ -37,6 +39,7 @@
   text-align : left;
   line-height : 1.5;
   user-select: none;
+  cursor:none;
 }
 #helper{
   position:absolute;
@@ -50,6 +53,7 @@
   text-align : center;
   line-height : 1.5;
   user-select: none;
+  cursor:none;
 }
 #credits{
   position:absolute;
@@ -62,6 +66,7 @@
   font-size:0.6em;
   text-transform: uppercase;
   text-align : center;
+  cursor:none;
 }
 #credits a {
   color:#f7575f;

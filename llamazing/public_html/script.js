@@ -1,3 +1,5 @@
+
+
 var scene,
   camera,fakeCamera,cameraOffset,
   controls,controlsLock,
@@ -8,10 +10,11 @@ var scene,
   shadowLight,
   backLight,
   light,
-  renderer,
-  pointFiled,
-  treeIns,treeapple,isRaining=true,
+  renderer,rainSpeed,
+  pointFiled,loader,pMaterial,
+  treeIns,treeapple,isRaining=false,
   container;
+var camMove=0;
 var particleSystem;
 var listener,spitSound,walkingSound,music,music1,eatingSound,gulpingSound; 
 var instructionField2=document.getElementById('instructions2');
@@ -74,10 +77,11 @@ var HEIGHT,
     cameraOffset = camera.position;
     camera.lookAt(new THREE.Vector3(0, 0, 0));
     fakeCamera = camera.clone();
-    renderer = new THREE.WebGLRenderer({
-      alpha: true,
-      antialias: true
-    });
+    var canvas = document.createElement( 'canvas' );
+    var context = canvas.getContext( 'webgl2', { alpha: true } );
+    renderer = new THREE.WebGLRenderer( { canvas: canvas, context: context,
+      antialias: true } );
+
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize(WIDTH, HEIGHT);
     renderer.shadowMap.enabled = true;
@@ -120,20 +124,20 @@ var HEIGHT,
     rainSystem();
   }
 function rainSystem(){
-    var loader = new THREE.TextureLoader();
+    loader = new THREE.TextureLoader();
     loader.crossOrigin = '';
     particleCount = 14000;
-    var pMaterial = new THREE.PointCloudMaterial({
+    pMaterial = new THREE.PointCloudMaterial({
       color: 0x5555FF,
-      size: 0.8,
+      size: 1.2,
       map: loader.load(
         "raindrop.png"
        ),
        blending: THREE.AdditiveBlending,
-       depthTest: false,
+       depthTest: true,
        transparent: true
     });
-
+    
     particles = new THREE.Geometry;
     particles.name = "rain";
     for (var i = 0; i < particleCount; i++) {
@@ -209,7 +213,7 @@ function organizeSounds(){
       particle.y = 200;
       particle.velocity.y = 0;
     }
-    particle.velocity.y -= Math.random() * .01;
+    particle.velocity.y -= Math.random() * rainSpeed;
     particle.y += particle.velocity.y;
     }
     particles.verticesNeedUpdate = true;
@@ -287,6 +291,7 @@ function setPickPosition(event) {
   var eatTime = new Date().getTime();
   var musicCount= 1;
   var dayCount = 0;
+  var weather = 0;
   function handleMoveOneHit(event){
       if(event.keyCode === 70 && isFlatShading == true){ 
         isFlatShading = false;
@@ -351,7 +356,24 @@ function setPickPosition(event) {
     }
     if(event.keyCode === 84)
     {
-        isRaining = !isRaining;
+        if(weather === 0){
+            rainSpeed = 0.01;
+            weather = 1;
+            isRaining = true;
+            pMaterial.map =loader.load("raindrop.png");
+            pMaterial.color.setHex("0x5555ff");
+        }
+        else if(weather === 1){
+            rainSpeed = 0.001;
+            weather = 2;
+            isRaining = true;
+            pMaterial.map =loader.load("snow.png");
+            pMaterial.color.setHex("0xffffff");
+        }
+        else{
+            weather = 0;
+            isRaining = false;
+        }
     }
     if(event.keyCode === 77){
         if(musicCount===0){
@@ -447,7 +469,7 @@ function createBanner(){
 }
   function createLights() {
   light = new THREE.HemisphereLight(0xffffff, 0xb3858c, .8);
- 
+  
   shadowLight = new THREE.DirectionalLight(0xffffff, .8,100);
   shadowLight.position.set(10000, 10000, 5000);
   shadowLight.castShadow = true;
@@ -1239,10 +1261,14 @@ function loop() {
     pointField.innerHTML = point;
     handleMove();
     changeShading();
+    shadowLight.position.set(10000, 10000, 5000+camMove);
+    if(map[76])
+        camMove+=60;
     distList = [];
     fruitlist.forEach(appleDist);
     particleSystem.position.x = llama.threegroup.position.x;
     particleSystem.position.z = llama.threegroup.position.z;
+    console.log(rainSpeed);
     if(isRaining)
         {    
             simulateRain();
