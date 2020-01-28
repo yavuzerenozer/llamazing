@@ -130,7 +130,7 @@ function rainSystem(){
       color: 0x5555FF,
       size: 11,
       map: loader.load(
-        "raindrop.png"
+        "./public_html/raindrop.png"
        ),
        blending: THREE.AdditiveBlending,
        depthTest: true,
@@ -160,37 +160,37 @@ function organizeSounds(){
     camera.add( listener );
     spitSound = new THREE.Audio( listener );
     var audioLoader = new THREE.AudioLoader();
-        audioLoader.load( 'sounds/spit.wav', function( buffer ) {
+        audioLoader.load( './public_html/sounds/spit.wav', function( buffer ) {
 	spitSound.setBuffer( buffer );
 	spitSound.setVolume( 0.5 );
     });
     walkingSound = new THREE.Audio( listener );
-    audioLoader.load( 'sounds/walk.mp3', function( buffer ) {
+    audioLoader.load( './public_html/sounds/walk.mp3', function( buffer ) {
 	walkingSound.setBuffer( buffer );
 	walkingSound.setVolume( 0.5 );
     });
     music = new THREE.Audio( listener );
-    audioLoader.load( 'sounds/happyLlama.mp3', function( buffer ) {
+    audioLoader.load( './public_html/sounds/happyLlama.mp3', function( buffer ) {
 	music.setBuffer( buffer );
 	music.setVolume( 0.5 );
         music.setLoop(true);
         //music.play();
     });
     music1 =new THREE.Audio( listener );
-    audioLoader.load( 'sounds/music.mp3', function( buffer ) {
+    audioLoader.load( './public_html/sounds/music.mp3', function( buffer ) {
 	music1.setBuffer( buffer );
 	music1.setVolume( 0.5 );
         music1.setLoop(true);
         music1.play();
     });
     eatingSound =new THREE.Audio( listener );
-    audioLoader.load( 'sounds/eat.wav', function( buffer ) {
+    audioLoader.load( './public_html/sounds/eat.wav', function( buffer ) {
 	eatingSound.setBuffer( buffer );
 	eatingSound.setVolume( 0.5 );
         
     });
     gulpingSound =new THREE.Audio( listener );
-    audioLoader.load( 'sounds/gulp.wav', function( buffer ) {
+    audioLoader.load( './public_html/sounds/gulp.wav', function( buffer ) {
 	gulpingSound.setBuffer( buffer );
 	gulpingSound.setVolume( 0.5 );
         
@@ -366,14 +366,14 @@ function setPickPosition(event) {
             rainSpeed = 0.01;
             weather = 1;
             isRaining = true;
-            pMaterial.map =loader.load("raindrop.png");
+            pMaterial.map =loader.load("./public_html/raindrop.png");
             pMaterial.color.setHex("0x5555ff");
         }
         else if(weather === 1){
             rainSpeed = 0.001;
             weather = 2;
             isRaining = true;
-            pMaterial.map =loader.load("snow.png");
+            pMaterial.map =loader.load("./public_html/snow.png");
             pMaterial.color.setHex("0xffffff");
         }
         else{
@@ -460,7 +460,7 @@ function setPickPosition(event) {
 
 //spit to javascript if you want
 function createBanner(){
-    var texture = THREE.ImageUtils.loadTexture( "jsImg.png" );
+    var texture = THREE.ImageUtils.loadTexture( "./public_html/jsImg.png" );
 
     texture.wrapS = THREE.RepeatWrapping; 
     texture.wrapT = THREE.RepeatWrapping;
