@@ -125,10 +125,10 @@ var HEIGHT,
 function rainSystem(){
     loader = new THREE.TextureLoader();
     loader.crossOrigin = '';
-    particleCount = 14000;
+    particleCount = 6000;
     pMaterial = new THREE.PointCloudMaterial({
       color: 0x5555FF,
-      size: 1.2,
+      size: 11,
       map: loader.load(
         "raindrop.png"
        ),
@@ -140,9 +140,9 @@ function rainSystem(){
     particles = new THREE.Geometry;
     particles.name = "rain";
     for (var i = 0; i < particleCount; i++) {
-        var pX = Math.random()*500 - 250,
-            pY = Math.random()*500 - 250,
-            pZ = Math.random()*500 - 250,
+        var pX = Math.random()*3000-1500,
+            pY = Math.random()*500,
+            pZ = Math.random()*3000-1500,
             particle = new THREE.Vector3(pX, pY, pZ);
         particle.velocity = {};
         particle.velocity.y = 0;
@@ -213,11 +213,11 @@ function organizeSounds(){
     var pCount = particleCount;
     while (pCount--) {
     var particle = particles.vertices[pCount];
-    if (particle.y < 0) {
-      particle.y = 200;
+    if (particle.y < -36) {
+      particle.y = 500;
       particle.velocity.y = 0;
     }
-    particle.velocity.y -= Math.random() * rainSpeed;
+    particle.velocity.y -= Math.random() * rainSpeed *15;
     particle.y += particle.velocity.y;
     }
     particles.verticesNeedUpdate = true;
