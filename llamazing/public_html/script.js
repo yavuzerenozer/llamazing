@@ -1,5 +1,3 @@
-
-
 var scene,
   camera,fakeCamera,cameraOffset,
   controls,controlsLock,
@@ -52,17 +50,16 @@ var HEIGHT,
     x: 0,
     y: 0
   };
-  //javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
   function init() {
       
     pointField = document.getElementById('point');
     instructionField2 = document.getElementById('instructions2');
     instructionField = document.getElementById('instructions');
-    scene = new THREE.Scene();
+    scene = new THREE.Scene();//creating the scene
     
     HEIGHT = window.innerHeight;
     WIDTH = window.innerWidth;
-    aspectRatio = WIDTH / HEIGHT;
+    aspectRatio = WIDTH / HEIGHT;//to be able to resize canvas while resizing window
     fieldOfView = 40;
     nearPlane = 1;
     farPlane = 6000;
@@ -123,6 +120,8 @@ var HEIGHT,
     organizeSounds();
     rainSystem();
   }
+
+// Rain and snow system particles created here  
 function rainSystem(){
     loader = new THREE.TextureLoader();
     loader.crossOrigin = '';
@@ -154,6 +153,8 @@ function rainSystem(){
     
     scene.add(particleSystem);
 }
+
+//sounds created and organized here
 function organizeSounds(){
     listener = new THREE.AudioListener();
     camera.add( listener );
@@ -195,6 +196,7 @@ function organizeSounds(){
         
     });
 }
+
  function mouseDown(){
      handleSpitDown();
     changed = true;
@@ -205,6 +207,8 @@ function organizeSounds(){
         handleSpitUp();
         changed= false;}
  }
+
+ //Simulating the rain with the particles generated
  function simulateRain() {
     var pCount = particleCount;
     while (pCount--) {
@@ -219,11 +223,11 @@ function organizeSounds(){
     particles.verticesNeedUpdate = true;
 };
 
+
  var objs;    
  function rayVertex(){
      
-    
-    
+   
      raycaster.setFromCamera( mouse.clone(), camera );
     //console.log(scene.children);
      var objects = [];
@@ -292,6 +296,8 @@ function setPickPosition(event) {
   var musicCount= 1;
   var dayCount = 0;
   var weather = 0;
+
+  //Keys handled here
   function handleMoveOneHit(event){
       if(event.keyCode === 70 && isFlatShading == true){ 
         isFlatShading = false;
@@ -390,6 +396,8 @@ function setPickPosition(event) {
         }
     }
   }
+
+  //movements handled here
   function handleMove(){
     if(map[87] && !freeze)
     {
@@ -444,6 +452,8 @@ function setPickPosition(event) {
         
     
 }
+
+//this one is for apple removal from the scene
   function removeEntity(obj) {
       if(typeof obj.parent !== 'undefined'){
         obj.parent.remove(obj);
@@ -451,6 +461,8 @@ function setPickPosition(event) {
     
 
 }
+
+//spit to javascript if you want
 function createBanner(){
     var texture = THREE.ImageUtils.loadTexture( "jsImg.png" );
 
@@ -467,12 +479,15 @@ function createBanner(){
     pla.rotation.y = THREE.Math.degToRad(150);
     scene.add( pla );
 }
+
+
   function createLights() {
   light = new THREE.HemisphereLight(0xffffff, 0xb3858c, .8);
   
   shadowLight = new THREE.DirectionalLight(0xffffff, .8,100);
   shadowLight.position.set(10000, 10000, 5000);
   shadowLight.castShadow = true;
+
   shadowLight.shadow.mapSize.width = 5120;  // default
   shadowLight.shadow.mapSize.height = 5120; // default
   shadowLight.shadow.camera.near = 10;    // default
@@ -482,10 +497,11 @@ function createBanner(){
   shadowLight.shadow.camera.right = 3200;
   shadowLight.shadow.camera.top = 2500;
 
-  scene.add(helper);
   scene.add(light);
   scene.add(shadowLight);
+
 }
+
 function createFloor() {
   
   var geom = new THREE.PlaneGeometry(20000, 20000);
@@ -502,6 +518,7 @@ function createFloor() {
   env.add(floor);
   scene.add(env);
 }
+
 function createWalls(){
     env = new THREE.Group();
     var wall1 = new THREE.Mesh(new THREE.PlaneBufferGeometry(20000, 20000), new THREE.MeshLambertMaterial({
@@ -531,6 +548,8 @@ function createWalls(){
     env.add(wall4);
     
 }
+
+//this grass is experimental we will add this when we handled the performance issues
 var grass;
 function generateTexture() {
 
@@ -606,7 +625,8 @@ scene.add(temp);
     }
 */
 
-}	
+}
+
 var redAppleMat = new THREE.MeshPhongMaterial({
     color: 0xff0000,
     flatShading: isFlatShading
@@ -626,26 +646,25 @@ function createTrees() {
   }), 120, 80, 120, 0, 105, 0, 0, 0, 0);
   treeapple = makeCube(redAppleMat, 10, 10, 10, 0, 105, 0, 0, 0, 0);
   treeapple.receiveShadow = true;
-  var treeapple1 = treeapple.clone();
-  
+  var treeapple1 = treeapple.clone();  
   treeapple1.position.z-=20;
   treeapple1.position.y-=30;
+
   var treeapple2 = treeapple.clone();
   treeapple2.position.x-=60;
   treeapple2.position.y-=20;
   treeapple2.position.z-=70;
+
   tree.add(treegrass);
   tree.castShadow = true;
   tree.receiveShadow = true;
   treegrass.castShadow = true;
   treegrass.receiveShadow = true;
-  //treegrass.add(treeapple);
-  //treegrass.add(treeapple1);
-  //treegrass.add(treeapple2);
-  tree.name = "tree";
+
   treeIns = tree.clone();
   var tree2 = tree.clone();
   trees = [tree,tree2]; 
+
   var bTree = makeCube(new THREE.MeshLambertMaterial({
     color: 0xb05307,
     flatShading: isFlatShading
@@ -666,6 +685,7 @@ function createTrees() {
     color: 0x95c088,
     flatShading: isFlatShading
   }), 40, 20, 100, 0, 250, 60, THREE.Math.degToRad(20), 0, 0);
+
   bTree.castShadow = true;
   bTreeGrass.castShadow = true;
   bTreeGrass1.castShadow = true;
@@ -676,15 +696,18 @@ function createTrees() {
   bTreeGrass1.receiveShadow = true;
   bTreeGrass2.receiveShadow = true;
   bTreeGrass3.receiveShadow = true;
+
   bTree.add(bTreeGrass);
   bTree.add(bTreeGrass1);
   bTree.add(bTreeGrass2);
   bTree.add(bTreeGrass3);
+
   var bGeo = new THREE.TorusGeometry( 10, 3, 16, 100, Math.PI*3/4 ); 
   var banana = new THREE.Mesh(bGeo,new THREE.MeshLambertMaterial({
     color: 0xffff00,
     flatShading: isFlatShading}));
   var bananas = new THREE.Group();
+
   banana.position.y = 245;
   banana.position.x = 10;
   banana.rotation.z = THREE.Math.degToRad(-90);
@@ -692,11 +715,11 @@ function createTrees() {
   ban1.rotation.y = THREE.Math.degToRad(45);
   ban2 = banana.clone();
   ban2.rotation.y = THREE.Math.degToRad(-45);
+
   bananas.add(banana);
   bananas.add(ban1);
   bananas.add(ban2);
-  //bTree.add(bananas);
-  //scene.add(bTree);
+
   
   for(i = 0; i < 60; i++)
   {
@@ -724,7 +747,7 @@ function createTrees() {
       temp.rotation.y += rand2 *200;
       trees.push(temp);      
       scene.add(trees[i+2]);
-      collidableMeshList.push(trees[i+2]);
+      collidableMeshList.push(trees[i+2]);//collidable things
 
         
   }
@@ -733,6 +756,7 @@ function createTrees() {
   
 }
 
+//add apples to a newly created tree.
 function addApples(temp){
     
         var color;
@@ -766,6 +790,8 @@ function addApples(temp){
 
         }
 }
+
+//creating rock function
 function createRocks(){
     for(var i = 0; i<20 ; i++){
         var rand =  Math.random()-0.5;
@@ -781,6 +807,8 @@ function createRocks(){
         temp.rotation.y += rand2 *200;
     }
 }
+
+//creating the llama 
 Llama = function() 
 {
     this.threegroup = new THREE.Group();
@@ -826,6 +854,7 @@ Llama = function()
     color: 0xf9ff79,
     flatShading: isFlatShading
   });
+
   this.body = new THREE.Group();
   this.body.name = 'body';
   this.belly = makeCube(llamaMat, 30, 30, 70, 0, 0, -15, 0, 0, 0);
@@ -877,7 +906,7 @@ Llama = function()
   this.cheekR = this.cheekL.clone();
   this.cheekR.position.x = -this.cheekL.position.x;
   
-    this.eyeL = makeCube(whiteMat, 10, 22, 22, 27, 34, 18, 0, 0, 0);
+  this.eyeL = makeCube(whiteMat, 10, 22, 22, 27, 34, 18, 0, 0, 0);
   this.eyeR = this.eyeL.clone();
   this.eyeR.position.x = -27;
 
@@ -892,6 +921,7 @@ Llama = function()
   this.noseR = this.noseL.clone();
   this.noseR.position.x = -this.noseL.position.x;
   
+  //spothlight and headlight here
   this.headLight = new THREE.SpotLight(0xf9ff79);
   this.headLight.position.set(0,0,1);
   this.headLight.castShadow = true;
@@ -934,7 +964,7 @@ Llama = function()
   this.headLightBody.add(this.headLight);
   this.head.scale.set(.5,.5,.5);
   
-  
+  //for head movements
   this.dummyHead = this.face.clone();
   this.dummyHead.material = llamaMat.clone();
   this.dummyHead .scale.set(.5,.5,.5);
@@ -971,6 +1001,8 @@ Llama = function()
     }
   });
   }
+
+  //stretching back while spitting
   Llama.prototype.SpitLoad = function(l)
   {
       var speed = globalSpeedRate/3;
@@ -987,6 +1019,8 @@ Llama = function()
       })
       
   }
+
+  //moving forward animation and sounds handled here
   Llama.prototype.MoveForward = function()
 {
     walkingSound.play();
@@ -1014,6 +1048,8 @@ Llama = function()
 
     
 };
+
+//same as moveforward but it just moves backward
 Llama.prototype.MoveBackward = function()
 {
     walkingSound.play();
@@ -1037,6 +1073,8 @@ Llama.prototype.MoveBackward = function()
          
     this.moveFeet();
 };
+
+//looking movements here
 Llama.prototype.look = function(dir){
   var speed = .01*globalSpeedRate;
   //timeFire = Math.round(s * 10);
@@ -1049,6 +1087,8 @@ else{
 }
 eatFlag = -1;
 var eatAnim;
+
+//here eat animation and sound handled
 Llama.prototype.eat = function(){
   var speed = 1*globalSpeedRate;
   if(!eatingSound.isPlaying)
@@ -1093,6 +1133,8 @@ Llama.prototype.eat = function(){
       
   }
 };
+
+//This function makes our llama spit and handles the collision since we need to check if the fruit has been hit or not
 Llama.prototype.spit = function()
 {
     var sp = spitObj.clone();
@@ -1115,7 +1157,7 @@ Llama.prototype.spit = function()
         if(i < points.length-1){
             anim.eventCallback("onComplete",init,[i+1]);
             var originPoint = sp.position.clone();
-            for(var vertexIndex = 0; vertexIndex < sp.geometry.vertices.length; vertexIndex++){    
+            for(var vertexIndex = 0; vertexIndex < sp.geometry.vertices.length; vertexIndex++){//fruit hit part    
                 var localVertex = sp.geometry.vertices[vertexIndex].clone();
                 var globalVertex = localVertex.applyMatrix4( sp.matrix );
                 var directionVector = globalVertex.sub( sp.position );
@@ -1138,9 +1180,12 @@ Llama.prototype.spit = function()
     }
     
 }
+
 flag = -1;
 var d = new Date();
 var time = d.getTime();
+
+//moving foot animation here
 Llama.prototype.moveFeet = function() {
     var speed = 1.3 * globalSpeedRate / moveSpeed;
     
@@ -1170,6 +1215,8 @@ Llama.prototype.moveFeet = function() {
         ease: Back.easeOut
     });
     }
+
+//while standing still sound stops and animation stops    
 Llama.prototype.stableFeet = function()
 {   
     if(walkingSound.isPlaying)
@@ -1193,6 +1240,8 @@ Llama.prototype.stableFeet = function()
         ease: Back.easeOut
     });
 }
+
+//since we are creating so many objects these are helping with it.
 function makeCone(mat, w, h, d, posX, posY, posZ, rotX, rotY, rotZ) {
   var geom = new THREE.ConeGeometry(w, h, d,1,true);
   var mesh = new THREE.Mesh(geom, mat);
@@ -1247,6 +1296,7 @@ function createLlama(){
     
 }
 ;
+
 var spitLength = 50;
 flag = true;
 var curveg;
@@ -1255,6 +1305,8 @@ var minApple ;
 var hold = "";
 var hold2 = "";
 var flag_inst = true;
+
+//loop instance called for rendering and all the other things, fake sun effect is the easiest example
 function loop() {
     if(mousedown && !controls.enabled)
         mouseDown();
@@ -1313,6 +1365,8 @@ function loop() {
 
     requestAnimationFrame(loop);
 }
+
+//editing mode with 'q'
 var mouseEdit = false;
 var newInstance;
 document.getElementById("TreeButton").addEventListener("click",function(){ 
@@ -1469,6 +1523,8 @@ function appleDist(item,index)
         vec.setFromMatrixPosition(item.matrixWorld);
         distList.push(llama.threegroup.position.distanceTo(vec));
     }
+
+//this are for the aim dots and range of the llama    
 var target;
 function aim(){
     scene.remove(arrow);
@@ -1526,6 +1582,8 @@ function aim(){
     else
         scene.add(arrow);
 }
+
+//If pressed f this function called and here is how it changes shading.
 function changeShading()
 {
     if(isFlatShading){
