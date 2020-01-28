@@ -1,6 +1,6 @@
 var scene,
   camera,fakeCamera,cameraOffset,
-  controls,controlsLock,
+  controls,
   fieldOfView,
   aspectRatio,
   nearPlane,
@@ -414,11 +414,7 @@ function setPickPosition(event) {
     else if(map[68] && !freeze){
         llama.look("right");
     }
-    
-    if(map[80]){
-        controlsLock.lock();
-    }
-    
+ 
     if(map[69] && eatFlag === -1){
         eatFlag = 1;
         eatTime = new Date().getTime();
@@ -1276,16 +1272,7 @@ function createLlama(){
                     const delta = Math.sign(event.deltaY);
                     llama.headLight.intensity-= delta/10;
     }});
-    controlsLock = new THREE.PointerLockControls( llama.head);
-    controlsLock.addEventListener( 'lock', function () {
-
-	document.addEventListener('mousedown', handleSpitDown, false);
-        document.addEventListener('mouseup', handleSpitUp, false);
-    } );
-    controlsLock.addEventListener( 'unlock', function () {
-        document.removeEventListener('mousedown', handleSpitDown, false);
-        document.removeEventListener('mouseup', handleSpitUp, false);
-    } );
+    
     geometry = new THREE.Geometry();
     geometry.vertices.push(new THREE.Vector3( 0, 0, 0) );
     geometry.vertices.push(new THREE.Vector3( 20, 10, 0) );
