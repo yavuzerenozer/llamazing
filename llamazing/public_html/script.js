@@ -1307,7 +1307,6 @@ function loop() {
     fruitlist.forEach(appleDist);
     particleSystem.position.x = llama.threegroup.position.x;
     particleSystem.position.z = llama.threegroup.position.z;
-    console.log(rainSpeed);
     if(isRaining)
         {    
             simulateRain();
@@ -1389,7 +1388,6 @@ function edit()
     
     if(mouseEdit)
     {
-        console.log("sda");
         document.addEventListener("wheel", event => {
         const delta = Math.sign(event.deltaY);
         if(editMode)    
